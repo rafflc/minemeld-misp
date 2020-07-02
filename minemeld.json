@@ -10,7 +10,7 @@
         },
         "minemeld_nodes": {
             "mmmisp.Miner": "mmmisp.node:Miner",
-            "mmmisp.taxii.DataFeed": "mmmisp.taxii:DataFeed:"
+            "mmmisp.taxii.DataFeed": "mmmisp.taxii:DataFeed"
         },
         "minemeld_prototypes": {
             "mmmisp.prototypes": "mmmisp:prototypes"
