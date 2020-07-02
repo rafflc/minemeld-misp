@@ -1,5 +1,5 @@
 {
-    "version": "2.4.96b4",
+    "version": "2.5.0",
     "name": "minemeld-misp",
     "author": "Palo Alto Networks",
     "author_email": "techbizdev@paloaltonetworks.com",
@@ -9,12 +9,13 @@
             "mmmispWebui": "mmmisp:webui_blueprint"
         },
         "minemeld_nodes": {
-            "mmmisp.Miner": "mmmisp.node:Miner"
+            "mmmisp.Miner": "mmmisp.node:Miner",
+            "mmmisp.taxii.DataFeed": "mmmisp.taxii:DataFeed:"
         },
         "minemeld_prototypes": {
             "mmmisp.prototypes": "mmmisp:prototypes"
         }
 
     },
-    "manifest_version": 0
+    "manifest_version": 1
 }
