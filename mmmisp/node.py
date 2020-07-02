@@ -25,7 +25,8 @@ _MISP_TO_MINEMELD = {
     'sha512': 'sha512',
     'ssdeep': 'ssdeep',
     'mutex': 'mutex',
-    'filename': 'file.name'
+    'filename': 'file.name',
+    'filename|md5': 'file.name.md5'
 }
 
 
@@ -251,16 +252,16 @@ class Miner(BasePollerFT):
                 indicator, _ = indicator.split('|', 1)
                 iv['type'] = self._detect_ip_version(indicator)
                 iv['direction'] = 'outbound'
-            elif itype[:9] == 'filename|':
-                indicator, indicator2 = indicator.split('|', 1)
-                iv['type'] = 'file.name'
+            #elif itype[:9] == 'filename|':
+            #    indicator, indicator2 = indicator.split('|', 1)
+            #    iv['type'] = 'file.name'
 
                 # If we know the 2nd indicator type, clone the iv as it's the same event, and append it it to results
-                itype2 = _MISP_TO_MINEMELD.get(itype[9:], None)
-                if itype2 is not None:
-                    iv2 = copy.deepcopy(iv)  # Copy IV since it's the same event, just different type
-                    iv2['type'] = itype2
-                    result.append([indicator2, iv2])  # Append our second indicator
+                #itype2 = _MISP_TO_MINEMELD.get(itype[9:], None)
+                #if itype2 is not None:
+                #    iv2 = copy.deepcopy(iv)  # Copy IV since it's the same event, just different type
+                #    iv2['type'] = itype2
+                #    result.append([indicator2, iv2])  # Append our second indicator
 
             else:
                 iv['type'] = _MISP_TO_MINEMELD.get(itype, None)
