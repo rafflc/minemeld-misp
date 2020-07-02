@@ -1,0 +1,17 @@
+url:
+description: >
+  Custom TAXII DataFeed supporting additional types in combination with MISP.
+
+prototypes:
+    extendedTaxiiDataFeed:
+        author: Raffl Christopher
+        development_status: EXPERIMENTAL
+        node_type: output
+        indicator_types:
+          - any
+        tags:
+          - extension
+          - TAXII
+        description: extended TAXII DataFeed
+        class: mmmisp.taxii.DataFeed
+        config: {}
