@@ -22,7 +22,6 @@ import os.path
 from datetime import datetime, timedelta
 
 import pytz
-import lz4.frame
 import lxml.etree
 import yaml
 import redis
@@ -57,6 +56,8 @@ import cybox.objects.file_object
 
 import mixbox.idgen
 import mixbox.namespaces
+
+import lz4.frame
 
 from minemeld.ft import basepoller, base, actorbase
 from minemeld.ft.utils import dt_to_millisec, interval_in_sec, utc_millisec
