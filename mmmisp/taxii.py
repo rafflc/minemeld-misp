@@ -57,7 +57,7 @@ import cybox.objects.file_object
 import mixbox.idgen
 import mixbox.namespaces
 
-import lz4.frame
+import lz4
 
 from minemeld.ft import basepoller, base, actorbase
 from minemeld.ft.utils import dt_to_millisec, interval_in_sec, utc_millisec
@@ -1600,10 +1600,7 @@ class DataFeed(actorbase.ActorBaseFT):
 
             sp.add_indicator(sindicator)
 
-        spackage = 'lz4'+lz4.frame.compress(
-            sp.to_json(),
-            compression_level=lz4.frame.COMPRESSIONLEVEL_MINHC
-        )
+        spackage = spackage = 'lz4'+lz4.compressHC(sp.to_json())
         with self.SR.pipeline() as p:
             p.multi()
 
