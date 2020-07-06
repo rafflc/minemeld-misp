@@ -1,9 +1,9 @@
 {
-    "version": "2.5.0",
-    "name": "minemeld-misp",
-    "author": "Palo Alto Networks",
+    "version": "0.1",
+    "name": "misp-taxii",
+    "author": "InfoGuard AG",
     "author_email": "techbizdev@paloaltonetworks.com",
-    "description": "MineMeld extension for MISP",
+    "description": "MineMeld extension for MISP and TAXII",
     "entry_points": {
         "minemeld_webui": {
             "mmmispWebui": "mmmisp:webui_blueprint"
