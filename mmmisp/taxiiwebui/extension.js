@@ -66,7 +66,7 @@ angular.module('mmmisptaxiiWebui', [])
     .config(['$stateProvider', function($stateProvider) {
         $stateProvider.state('nodedetail.extendedtaxiidatafeedinfo', {
             templateUrl: '/extensions/webui/mmmispWebui/misp.miner.info.html',
-            controller: 'NodeDetailTAXIIDataFeedInfoController',
+            controller: 'NodeDetailFeedInfoController',
             controllerAs: 'vm'
         });
     }])
