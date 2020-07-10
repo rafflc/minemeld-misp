@@ -1,4 +1,4 @@
-/// <reference path="../../../typings/main.d.ts" />
+/*/// <reference path="../../../typings/main.d.ts" />
 
 import { INodeDetailResolverService } from '../../../src/app/services/nodedetailresolver';
 import { IMinemeldStatusNode } from '../../../src/app/services/status';
@@ -18,7 +18,7 @@ class NodeDetailTAXIIDataFeedInfoController extends NodeDetailFeedInfoController
     }
 }
 
-/** @ngInject */
+/!** @ngInject *!/
 function taxiiDataFeedRouterConfig($stateProvider: ng.ui.IStateProvider) {
     $stateProvider
         .state('nodedetail.taxiidatafeedinfo', {
@@ -29,7 +29,7 @@ function taxiiDataFeedRouterConfig($stateProvider: ng.ui.IStateProvider) {
         ;
 }
 
-/** @ngInject */
+/!** @ngInject *!/
 function taxiiDataFeedRegisterClass(NodeDetailResolver: INodeDetailResolverService) {
     NodeDetailResolver.registerClass('mmmisp.taxii.DataFeed', {
         tabs: [{
@@ -53,8 +53,49 @@ function taxiiDataFeedRegisterClass(NodeDetailResolver: INodeDetailResolverServi
     });
 }
 
-console.log('Loading TAXII extended DataFeed');
+
 angular.module('mmmisptaxiiWebui')
     .config(taxiiDataFeedRouterConfig)
     .run(taxiiDataFeedRegisterClass)
-    ;
+    ;*/
+
+console.log('Loading TAXII extended DataFeed');
+(function() {
+
+angular.module('mmmisptaxiiWebui')
+    .config(['$stateProvider', function($stateProvider) {
+        $stateProvider.state('nodedetail.taxiidatafeedinfo', {
+            templateUrl: '/extensions/webui/mmmispWebui/misp.miner.info.html',
+            controller: 'NodeDetailTAXIIDataFeedInfoController',
+            controllerAs: 'vm'
+        });
+    }])
+    .run(['NodeDetailResolver', '$state', function(NodeDetailResolver, $state) {
+        NodeDetailResolver.registerClass('mmmisp.taxii.DataFeed', {
+            tabs: [{
+                icon: 'fa fa-circle-o',
+                tooltip: 'INFO',
+                state: 'nodedetail.taxiidatafeedinfo',
+                active: false
+            },
+            {
+                icon: 'fa fa-area-chart',
+                tooltip: 'STATS',
+                state: 'nodedetail.stats',
+                active: false
+            },
+            {
+                icon: 'fa fa-asterisk',
+                tooltip: 'GRAPH',
+                state: 'nodedetail.graph',
+                active: false
+            }]
+        });
+
+        // if a nodedetail is already shown, reload the current state to apply changes
+        // we should definitely find a better way to handle this...
+        if ($state.$current.toString().startsWith('nodedetail.')) {
+            $state.reload();
+        }
+    }]);
+})();
