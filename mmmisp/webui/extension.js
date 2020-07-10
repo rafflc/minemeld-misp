@@ -1,25 +1,4 @@
 console.log('Loading mmmisp WebUI');
-var _getAllFilesFromFolder = function(dir) {
-
-    var filesystem = require("fs");
-    var results = [];
-
-    filesystem.readdirSync(dir).forEach(function(file) {
-
-        file = dir+'/'+file;
-        var stat = filesystem.statSync(file);
-
-        if (stat && stat.isDirectory()) {
-            results = results.concat(_getAllFilesFromFolder(file))
-        } else results.push(file);
-
-    });
-
-    return results;
-
-};
-console.log(_getAllFilesFromFolder(window.location.pathname));
-console.log(_getAllFilesFromFolder("/source/"));
 
 (function() {
 

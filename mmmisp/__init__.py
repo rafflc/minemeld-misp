@@ -6,7 +6,7 @@ def webui_blueprint():
 def webui_taxii_blueprint():
     from minemeld.flask import aaa
 
-    return aaa.MMBlueprint('mmmisptaxiiWebui', __name__, static_folder='webui', static_url_path='')
+    return aaa.MMBlueprint('mmmisptaxiiWebui', __name__, static_folder='taxiiwebui', static_url_path='')
 
 def prototypes():
     import os

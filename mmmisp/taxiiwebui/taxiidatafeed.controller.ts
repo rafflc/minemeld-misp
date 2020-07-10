@@ -22,7 +22,7 @@ class NodeDetailTAXIIDataFeedInfoController extends NodeDetailFeedInfoController
 function taxiiDataFeedRouterConfig($stateProvider: ng.ui.IStateProvider) {
     $stateProvider
         .state('nodedetail.taxiidatafeedinfo', {
-            templateUrl: 'extensions/webui/mmmispWebui/taxiidatafeed.info.html',
+            templateUrl: 'extensions/webui/mmmisptaxiiWebui/taxiidatafeed.info.html',
             controller: NodeDetailTAXIIDataFeedInfoController,
             controllerAs: 'vm'
         })
