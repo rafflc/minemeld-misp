@@ -62,7 +62,7 @@ angular.module('mmmisptaxiiWebui')
 console.log('Loading TAXII extended DataFeed');
 (function() {
 
-angular.module('mmmisptaxiiWebui')
+angular.module('mmmisptaxiiWebui', [])
     .config(['$stateProvider', function($stateProvider) {
         $stateProvider.state('nodedetail.taxiidatafeedinfo', {
             templateUrl: '/extensions/webui/mmmispWebui/misp.miner.info.html',
