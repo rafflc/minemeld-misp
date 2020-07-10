@@ -53,9 +53,8 @@ function taxiiDataFeedRegisterClass(NodeDetailResolver: INodeDetailResolverServi
     });
 }
 
-console.log('Loading TAXII DataFeed');
+console.log('Loading TAXII extended DataFeed');
 angular.module('mmmispWebui')
-    .console.log(__dirname)
     .config(taxiiDataFeedRouterConfig)
     .run(taxiiDataFeedRegisterClass)
     ;
