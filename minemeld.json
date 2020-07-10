@@ -6,7 +6,8 @@
     "description": "MineMeld extension for MISP and TAXII",
     "entry_points": {
         "minemeld_webui": {
-            "mmmispWebui": "mmmisp:webui_blueprint"
+            "mmmispWebui": "mmmisp:webui_blueprint",
+            "mmmisptaxiiWebui": "mmmisp:webui_taxii_blueprint",
         },
         "minemeld_nodes": {
             "mmmisp.Miner": "mmmisp.node:Miner",

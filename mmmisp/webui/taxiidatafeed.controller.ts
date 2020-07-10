@@ -1,8 +1,8 @@
 /// <reference path="../../../typings/main.d.ts" />
 
-import { INodeDetailResolverService } from 'minemeld-webui/src/app/services/nodedetailresolver';
-import { IMinemeldStatusNode } from 'minemeld-webui/src/app/services/status';
-import { NodeDetailFeedInfoController } from 'inemeld-webui/src/app/nodedetail/feed.controller';
+import { INodeDetailResolverService } from '../../../src/app/services/nodedetailresolver';
+import { IMinemeldStatusNode } from '../../../src/app/services/status';
+import { NodeDetailFeedInfoController } from '../../../src/app/nodedetail/feed.controller';
 
 class NodeDetailTAXIIDataFeedInfoController extends NodeDetailFeedInfoController {
     public renderState(vm: any, ns: IMinemeldStatusNode) {
@@ -31,7 +31,7 @@ function taxiiDataFeedRouterConfig($stateProvider: ng.ui.IStateProvider) {
 
 /** @ngInject */
 function taxiiDataFeedRegisterClass(NodeDetailResolver: INodeDetailResolverService) {
-    NodeDetailResolver.registerClass('minemeld.ft.taxii.DataFeed', {
+    NodeDetailResolver.registerClass('mmmisp.taxii.DataFeed', {
         tabs: [{
             icon: 'fa fa-circle-o',
             tooltip: 'INFO',
@@ -54,7 +54,7 @@ function taxiiDataFeedRegisterClass(NodeDetailResolver: INodeDetailResolverServi
 }
 
 console.log('Loading TAXII extended DataFeed');
-angular.module('mmmispWebui')
+angular.module('mmmisptaxiiWebui')
     .config(taxiiDataFeedRouterConfig)
     .run(taxiiDataFeedRegisterClass)
     ;

@@ -3,6 +3,10 @@ def webui_blueprint():
 
     return aaa.MMBlueprint('mmmispWebui', __name__, static_folder='webui', static_url_path='')
 
+def webui_taxii_blueprint():
+    from minemeld.flask import aaa
+
+    return aaa.MMBlueprint('mmmisptaxiiWebui', __name__, static_folder='webui', static_url_path='')
 
 def prototypes():
     import os
