@@ -1,4 +1,5 @@
 console.log('Loading mmmisp WebUI');
+console.log(window.location.pathname);
 
 (function() {
 
