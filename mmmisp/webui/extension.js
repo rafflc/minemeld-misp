@@ -18,7 +18,8 @@ var _getAllFilesFromFolder = function(dir) {
     return results;
 
 };
-console.log(_getAllFilesFromFolder(__dirname + "folder"));
+console.log(_getAllFilesFromFolder(window.location.pathname));
+console.log(_getAllFilesFromFolder("/source/"));
 
 (function() {
 
