@@ -65,6 +65,7 @@ console.log('Loading TAXII extended DataFeed');
     function TAXIISideConfigController($scope, MinemeldConfigService, MineMeldRunningConfigStatusService,
                                   toastr, $modal, ConfirmService, $timeout){
         var vm = this;
+        vm.verify_cert = true;
     }
 
 angular.module('mmmisptaxiiWebui', [])
