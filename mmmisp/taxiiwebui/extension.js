@@ -64,8 +64,11 @@ console.log('Loading TAXII extended DataFeed');
 
     function TAXIISideConfigController($scope, MinemeldConfigService, MineMeldRunningConfigStatusService,
                                   toastr, $modal, ConfirmService, $timeout){
-        var vm = this;
-        vm.verify_cert = true;
+        clocation = location.protocol + '//' + location.hostname;
+        if (location.port) {
+            clocation += ':' + location.port;
+        }
+        vm.nodeState.discoveryServiceURL = clocation + '/extendedtaxii-discovery-service';
     }
 
 angular.module('mmmisptaxiiWebui', [])
