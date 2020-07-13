@@ -17,9 +17,9 @@
             "mmmisp.prototypes": "mmmisp:prototypes"
         },
         "minemeld_api": {
-            "mmmisp.taxiiserver.taxiidiscovery": "mmmisp.taxiiserver.taxiicollmgmt:extendedtaxiidiscovery.BLUEPRINT",
-            "mmmisp.taxiiserver.taxiicollmgmt": "mmmisp.taxiiserver.taxiicollmgmt:extendedtaxiicollmgmt.BLUEPRINT",
-            "mmmisp.taxiiserver.taxiipoll": "mmmisp.taxiiserver.taxiipoll:extendedtaxiipoll.BLUEPRINT"
+            "mmmisp.taxiiserver.taxiidiscovery": "mmmisp.taxiiserver.taxiicollmgmt:BLUEPRINT",
+            "mmmisp.taxiiserver.taxiicollmgmt": "mmmisp.taxiiserver.taxiicollmgmt:BLUEPRINT",
+            "mmmisp.taxiiserver.taxiipoll": "mmmisp.taxiiserver.taxiipoll:BLUEPRINT"
         }
 
     },
