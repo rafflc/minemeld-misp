@@ -18,7 +18,7 @@ from flask import request
 from flask import make_response
 
 from minemeld.flask.mmrpc import MMMaster
-from minemeld.falsk.logger import LOG
+from minemeld.flask.logger import LOG
 
 
 def taxii_make_response(m11):
