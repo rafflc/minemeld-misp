@@ -33,8 +33,8 @@ from minemeld.ft.utils import dt_to_millisec
 
 __all__ = ['BLUEPRINT']
 
-def get_blueprint():
-    return MMBlueprint('extendedtaxiipoll', __name__, url_prefix='')
+
+BLUEPRINT = MMBlueprint('extendedtaxiipoll', __name__, url_prefix='')
 
 
 _TAXII_POLL_RESPONSE_HEADER = """
@@ -42,6 +42,8 @@ _TAXII_POLL_RESPONSE_HEADER = """
 <taxii_11:Inclusive_End_Timestamp>%(inclusive_end_timestamp_label)s</taxii_11:Inclusive_End_Timestamp>
 """
 
+def get_blueprint():
+    return BLUEPRINT
 
 def _oldest_indicator_timestamp(feed):
     olist = SR.zrevrange(

@@ -32,8 +32,10 @@ __all__ = ['BLUEPRINT']
 
 HOST_RE = re.compile('^[a-zA-Z\d-]{1,63}(?:\.[a-zA-Z\d-]{1,63})*(?::[0-9]{1,5})*$')
 
+BLUEPRINT = MMBlueprint('extendedtaxiicollmgmt', __name__, url_prefix='')
+
 def get_blueprint():
-    return MMBlueprint('extendedtaxiicollmgmt', __name__, url_prefix='')
+    return BLUEPRINT
 
 
 @BLUEPRINT.route('/extendedtaxii-collection-management-service', methods=['POST'], feeds=True, read_write=False)
