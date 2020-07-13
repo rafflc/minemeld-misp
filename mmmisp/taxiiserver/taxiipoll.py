@@ -33,8 +33,8 @@ from minemeld.ft.utils import dt_to_millisec
 
 __all__ = ['BLUEPRINT']
 
-
-BLUEPRINT = MMBlueprint('extendedtaxiipoll', __name__, url_prefix='')
+def get_blueprint():
+    return MMBlueprint('extendedtaxiipoll', __name__, url_prefix='')
 
 
 _TAXII_POLL_RESPONSE_HEADER = """
