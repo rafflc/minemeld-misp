@@ -15,6 +15,11 @@
         },
         "minemeld_prototypes": {
             "mmmisp.prototypes": "mmmisp:prototypes"
+        },
+        "minemeld_api": {
+            "extendedtaxiidiscovery": "mmmisp.taxiiwebui.taxiidiscovery:extendedtaxiidiscovery.BLUEPRINT",
+            "extendedtaxiicollmgmt": "mmmisp.taxiiwebui.taxiicollmgmt:extendedtaxiicollmgmt.BLUEPRINT",
+            "extendedtaxiipoll": "mmmisp.taxiiwebui.taxiipoll:extendedtaxiipoll.BLUEPRINT"
         }
 
     },
