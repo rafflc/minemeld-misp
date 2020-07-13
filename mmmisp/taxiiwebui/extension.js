@@ -72,6 +72,7 @@ console.log('Loading TAXII extended DataFeed');
             clocation += ':' + location.port;
         }
         vm.nodeState.discoveryServiceURL = clocation + '/extendedtaxii-discovery-service';
+        console.log(vm.nodeState.discoveryServiceURL);
     }
 
 angular.module('mmmisptaxiiWebui', [])

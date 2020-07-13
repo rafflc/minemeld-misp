@@ -40,7 +40,6 @@ function MISPSideConfigController($scope, MinemeldConfigService, MineMeldRunning
             } else {
                 vm.url = undefined;
             }
-            vm.url = "swag";
         }, (error) => {
             toastr.error('ERROR RETRIEVING NODE SIDE CONFIG: ' + error.status);
             vm.automation_key = undefined;
