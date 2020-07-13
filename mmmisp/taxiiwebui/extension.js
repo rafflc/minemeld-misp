@@ -76,7 +76,7 @@ angular.module('mmmisptaxiiWebui', [])
     ])
     .config(['$stateProvider', function($stateProvider) {
         $stateProvider.state('nodedetail.extendedtaxiidatafeedinfo', {
-            templateUrl: '/extensions/webui/mmmisptaxiiWebui/taxidatafeed.info.html',
+            templateUrl: '/extensions/webui/mmmisptaxiiWebui/taxiidatafeed.info.html',
             controller: 'NodeDetailFeedInfoController',
             controllerAs: 'vm'
         });
