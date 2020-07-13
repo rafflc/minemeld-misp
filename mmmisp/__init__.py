@@ -12,8 +12,3 @@ def prototypes():
     import os
 
     return os.path.join(os.path.dirname(__file__), 'prototypes')
-
-def taxiidiscovery():
-    from minemeld.flask import aaa
-
-    return aaa.MMBlueprint('extendedtaxiidiscovery', __name__, static_folder='taxiiserver', url_prefix='')
