@@ -62,7 +62,17 @@ angular.module('mmmisptaxiiWebui')
 console.log('Loading TAXII extended DataFeed');
 (function() {
 
+    function TAXIISideConfigController($scope, MinemeldConfigService, MineMeldRunningConfigStatusService,
+                                  toastr, $modal, ConfirmService, $timeout){
+        var vm = this;
+    }
+
 angular.module('mmmisptaxiiWebui', [])
+    .controller('TAXIISideConfigController', [
+        '$scope', 'MinemeldConfigService', 'MineMeldRunningConfigStatusService',
+        'toastr', '$modal', 'ConfirmService', '$timeout',
+        TAXIISideConfigController
+    ])
     .config(['$stateProvider', function($stateProvider) {
         $stateProvider.state('nodedetail.extendedtaxiidatafeedinfo', {
             templateUrl: '/extensions/webui/mmmispWebui/misp.miner.info.html',
