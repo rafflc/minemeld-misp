@@ -64,6 +64,9 @@ console.log('Loading TAXII extended DataFeed');
 
     function TAXIISideConfigController($scope, MinemeldConfigService, MineMeldRunningConfigStatusService,
                                   toastr, $modal, ConfirmService, $timeout){
+
+        var vm = this;
+
         clocation = location.protocol + '//' + location.hostname;
         if (location.port) {
             clocation += ':' + location.port;
