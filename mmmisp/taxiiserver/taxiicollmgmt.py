@@ -77,7 +77,7 @@ def taxii_collection_mgmt_service():
         )
         si = libtaxii.messages_11.PollingServiceInstance(
             'urn:taxii.mitre.org:protocol:http:1.0',
-            'https://{}/taxii-poll-service'.format(server_host),
+            'https://{}/extendedtaxii-poll-service'.format(server_host),
             ['urn:taxii.mitre.org:message:xml:1.1']
         )
         cii.polling_service_instances.append(si)
