@@ -4,7 +4,6 @@ console.log('Loading mmmisp WebUI');
 
 function MISPSideConfigController($scope, MinemeldConfigService, MineMeldRunningConfigStatusService,
                                   toastr, $modal, ConfirmService, $timeout) {
-    console.log("MISP WEBUI CONTROLER");
     var vm = this;
 
     // side config settings

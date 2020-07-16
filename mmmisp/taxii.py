@@ -70,16 +70,6 @@ del stix_edh
 
 LOG = logging.getLogger(__name__)
 
-
-_STIX_MINEMELD_HASHES = [
-    'ssdeep',
-    'md5',
-    'sha1',
-    'sha256',
-    'sha512'
-]
-
-
 def set_id_namespace(uri, name):
     # maec and cybox
     NS = mixbox.namespaces.Namespace(uri, name)
@@ -205,6 +195,28 @@ def _stix_hash_observable(namespace, indicator, value):
 
     return [o]
 
+def _stix_filename_md5_observable(namespace, indicator, value):
+    id_ = '{}:observable-{}'.format(
+        namespace,
+        uuid.uuid4()
+    )
+
+    splitted = indicator.split('|')
+    filename = splitted[0]
+    md5 = splitted[1]
+
+    uo = cybox.objects.file_object.File()
+    uo.add_hash(md5)
+    uo.file_name = filename
+
+    o = cybox.core.Observable(
+        title='{}: {}'.format(value['type'], indicator),
+        id_=id_,
+        item=uo
+    )
+
+    return [o]
+
 
 _TYPE_MAPPING = {
     'IPv4': {
@@ -235,9 +247,13 @@ _TYPE_MAPPING = {
         'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
         'mapper': _stix_hash_observable
     },
-    'email-addr': {
+    'email.addr': {
         'indicator_type': stix.common.vocabs.IndicatorType.TERM_MALICIOUS_EMAIL,
         'mapper': _stix_email_addr_observable
+    },
+    'file.name.md5': {
+        'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
+        'mapper': _stix_filename_md5_observable
     }
 }
 

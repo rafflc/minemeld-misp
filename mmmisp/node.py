@@ -26,7 +26,8 @@ _MISP_TO_MINEMELD = {
     'ssdeep': 'ssdeep',
     'mutex': 'mutex',
     'filename': 'file.name',
-    'filename|md5': 'file.name.md5'
+    'filename|md5': 'file.name.md5',
+    'email-src': 'email.addr'
 }
 
 
