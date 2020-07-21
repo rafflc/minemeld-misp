@@ -75,7 +75,7 @@ def set_id_namespace(uri, name):
     NS = mixbox.namespaces.Namespace(uri, name)
     mixbox.idgen.set_id_namespace(NS)
 
-
+# IPv4, IPv6
 def _stix_ip_observable(namespace, indicator, value):
     category = cybox.objects.address_object.Address.CAT_IPV4
     if value['type'] == 'IPv6':
@@ -116,7 +116,7 @@ def _stix_ip_observable(namespace, indicator, value):
 
     return observables
 
-
+# email
 def _stix_email_addr_observable(namespace, indicator, value):
     category = cybox.objects.address_object.Address.CAT_EMAIL
 
@@ -138,7 +138,7 @@ def _stix_email_addr_observable(namespace, indicator, value):
 
     return [o]
 
-
+# domain
 def _stix_domain_observable(namespace, indicator, value):
     id_ = '{}:observable-{}'.format(
         namespace,
@@ -157,7 +157,7 @@ def _stix_domain_observable(namespace, indicator, value):
 
     return [o]
 
-
+# URL
 def _stix_url_observable(namespace, indicator, value):
     id_ = '{}:observable-{}'.format(
         namespace,
@@ -177,7 +177,7 @@ def _stix_url_observable(namespace, indicator, value):
 
     return [o]
 
-
+# md5, sha1, sha256, ssdeep
 def _stix_hash_observable(namespace, indicator, value):
     id_ = '{}:observable-{}'.format(
         namespace,
@@ -195,7 +195,8 @@ def _stix_hash_observable(namespace, indicator, value):
 
     return [o]
 
-def _stix_filename_md5_observable(namespace, indicator, value):
+# file.name.md5, file.name.sha1, file.name.sha256, file.name.ssdeep
+def _stix_filename_hash_observable(namespace, indicator, value):
     id_ = '{}:observable-{}'.format(
         namespace,
         uuid.uuid4()
@@ -203,10 +204,11 @@ def _stix_filename_md5_observable(namespace, indicator, value):
 
     splitted = indicator.split('|')
     filename = splitted[0]
-    md5 = splitted[1]
+    hash = splitted[1]
 
     uo = cybox.objects.file_object.File()
-    uo.add_hash(md5)
+    # add_hash automatically detects type of hash using the length of the given parameter
+    uo.add_hash(hash)
     uo.file_name = filename
 
     o = cybox.core.Observable(
@@ -217,6 +219,216 @@ def _stix_filename_md5_observable(namespace, indicator, value):
 
     return [o]
 
+# mutex
+def _stix_mutex_observable(namespace, indicator, value):
+    id_ = '{}:observable-{}'.format(
+        namespace,
+        uuid.uuid4()
+    )
+
+    mo = cybox.objects.mutex_object.Mutex()
+    mo.name = indicator
+
+    o = cybox.core.Observable(
+        title='{}: {}'.format(value['type'], indicator),
+        id_=id_,
+        item=mo
+    )
+
+    return [o]
+
+# pipe
+def _stix_pipe_observable(namespace, indicator, value):
+    id_ = '{}:observable-{}'.format(
+        namespace,
+        uuid.uuid4()
+    )
+
+    po = cybox.objects.pipe_object.Pipe()
+    po.name = indicator
+
+    o = cybox.core.Observable(
+        title='{}: {}'.format(value['type'], indicator),
+        id_=id_,
+        item=po
+    )
+
+    return [o]
+
+# port
+def _stix_port_observable(namespace, indicator, value):
+    id_ = '{}:observable-{}'.format(
+        namespace,
+        uuid.uuid4()
+    )
+
+    po = cybox.objects.port_object.Port()
+    po.port_value = indicator
+
+    o = cybox.core.Observable(
+        title='{}: {}'.format(value['type'], indicator),
+        id_=id_,
+        item=po
+    )
+
+    return [o]
+
+# windows-service-displayname, windows-service-name
+def _stix_windows_service_observable(namespace, indicator, value):
+    id_ = '{}:observable-{}'.format(
+        namespace,
+        uuid.uuid4()
+    )
+
+    wo = cybox.objects.win_service_object.WinService()
+    if('windows-service-name' in value['type']):
+        wo.service_name = indicator
+    if('windows-service-displayname' in value['type']):
+        wo.display_name = indicator
+
+    o = cybox.core.Observable(
+        title='{}: {}'.format(value['type'], indicator),
+        id_=id_,
+        item=wo
+    )
+
+    return [o]
+
+# regkey, regkey.value
+def _stix_registry_key_observable(namespace, indicator, value):
+    id_ = '{}:observable-{}'.format(
+        namespace,
+        uuid.uuid4()
+    )
+
+    ro = cybox.objects.win_registry_key_object.WinRegistryKey()
+    if('value' in value['type']):
+        elems = indicator.split('|')
+        ro.key = elems[0]
+        vo = cybox.objects.win_registry_key_object.RegistryValue()
+        vo.name = elems[1]
+        ro.values = cybox.objects.win_registry_key_object.RegistryValues()
+        ro.values.value = [vo]
+    else:
+        ro.key = indicator
+
+    o = cybox.core.Observable(
+        title='{}: {}'.format(value['type'], indicator),
+        id_=id_,
+        item=ro
+    )
+
+    return [o]
+
+def _stix_hostname_observable(namespace, indicator, value):
+    id_ = '{}:observable-{}'.format(
+        namespace,
+        uuid.uuid4()
+    )
+
+    ho = cybox.objects.hostname_object.Hostname()
+    ho.hostname_value = indicator
+
+    o = cybox.core.Observable(
+        title='{}: {}'.format(value['type'], indicator),
+        id_=id_,
+        item=ho
+    )
+
+    return [o]
+
+def _stix_socket_observable(namespace, indicator, value):
+    id_ = '{}:observable-{}'.format(
+        namespace,
+        uuid.uuid4()
+    )
+
+    so = cybox.objects.socket_address_object.SocketAddress()
+    elems = indicator.split('|')
+    if('.port' in value['type']):
+        po = cybox.objects.port_object.Port()
+        po.port_value = elems[1]
+        so.port = po
+    if ('hostname.' in value['type']):
+        ho = cybox.objects.hostname_object.Hostname()
+        ho.hostname_value = elems[0]
+        so.hostname = ho
+    if('IP' in value['type']):
+        category = cybox.objects.address_object.Address.CAT_IPV4
+        if ('IPv6' in value['type']):
+            category = cybox.objects.address_object.Address.CAT_IPV6
+
+        indicators = [elems[0]]
+        if '-' in indicator:
+            # looks like an IP Range, let's try to make it a CIDR
+            a1, a2 = elems[0].split('-', 1)
+            if a1 == a2:
+                # same IP
+                indicators = [a1]
+            else:
+                # use netaddr builtin algo to summarize range into CIDR
+                iprange = netaddr.IPRange(a1, a2)
+                cidrs = iprange.cidrs()
+                indicators = map(str, cidrs)
+
+        ao = cybox.objects.address_object.Address(
+            address_value=indicators[0],
+            category=category
+        )
+
+        so.ip_address = ao
+
+    o = cybox.core.Observable(
+        title='{}: {}'.format(value['type'], indicator),
+        id_=id_,
+        item=so
+    )
+
+    return [o]
+
+def _stix_whois_observable(namespace, indicator, value):
+    id_ = '{}:observable-{}'.format(
+        namespace,
+        uuid.uuid4()
+    )
+
+    elems = indicator.split('|')
+    wo = cybox.objects.whois_object.WhoisEntry()
+    wo.domain_name = cybox.objects.uri_object.URI(
+        value=elems[0]
+    )
+
+    category = cybox.objects.address_object.Address.CAT_IPV4
+    if ('IPv6' in value['type']):
+        category = cybox.objects.address_object.Address.CAT_IPV6
+
+    indicators = [elems[1]]
+    if '-' in indicator:
+        # looks like an IP Range, let's try to make it a CIDR
+        a1, a2 = elems[1].split('-', 1)
+        if a1 == a2:
+            # same IP
+            indicators = [a1]
+        else:
+            # use netaddr builtin algo to summarize range into CIDR
+            iprange = netaddr.IPRange(a1, a2)
+            cidrs = iprange.cidrs()
+            indicators = map(str, cidrs)
+
+    ao = cybox.objects.address_object.Address(
+        address_value=indicators[0],
+        category=category
+    )
+
+    wo.ip_address = ao
+
+    o = cybox.core.Observable(
+        title='{}: {}'.format(value['type'], indicator),
+        id_=id_,
+        item=wo
+    )
+
+    return [o]
 
 _TYPE_MAPPING = {
     'IPv4': {
@@ -247,13 +459,81 @@ _TYPE_MAPPING = {
         'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
         'mapper': _stix_hash_observable
     },
-    'email.addr': {
+    'ssdeep': {
+        'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
+        'mapper': _stix_hash_observable
+    },
+    'email': {
         'indicator_type': stix.common.vocabs.IndicatorType.TERM_MALICIOUS_EMAIL,
         'mapper': _stix_email_addr_observable
     },
     'file.name.md5': {
         'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
-        'mapper': _stix_filename_md5_observable
+        'mapper': _stix_filename_hash_observable
+    },
+    'file.name.sha1': {
+        'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
+        'mapper': _stix_filename_hash_observable
+    },
+    'file.name.sha256': {
+        'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
+        'mapper': _stix_filename_hash_observable
+    },
+    'file.name.ssdeep': {
+        'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
+        'mapper': _stix_filename_hash_observable
+    },
+    'mutex': {
+        'indicator_type': stix.common.vocabs.IndicatorType.TERM_MALWARE_ARTIFACTS,
+        'mapper': _stix_mutex_observable
+    },
+    'pipe': {
+        'indicator_type': stix.common.vocabs.IndicatorType.TERM_MALWARE_ARTIFACTS,
+        'mapper':  _stix_pipe_observable
+    },
+    'port': {
+        'indicator_type': stix.common.vocabs.IndicatorType.TERM_HOST_CHARACTERISTICS,
+        'mapper': _stix_port_observable
+    },
+    'windows-service-displayname': {
+        'indicator_type': stix.common.vocabs.IndicatorType.TERM_MALWARE_ARTIFACTS,
+        'mapper': _stix_windows_service_observable
+    },
+    'windows-service-name': {
+        'indicator_type': stix.common.vocabs.IndicatorType.TERM_MALWARE_ARTIFACTS,
+        'mapper': _stix_windows_service_observable
+    },
+    'regkey': {
+        'indicator_type': stix.common.vocabs.IndicatorType.TERM_MALWARE_ARTIFACTS,
+        'mapper': _stix_registry_key_observable
+    },
+    'regkey.value': {
+        'indicator_type': stix.common.vocabs.IndicatorType.TERM_MALWARE_ARTIFACTS,
+        'mapper': _stix_registry_key_observable
+    },
+    'hostname.port': {
+        'indicator_type': stix.common.vocabs.IndicatorType.TERM_HOST_CHARACTERISTICS,
+        'mapper': _stix_socket_observable
+    },
+    'IPv4.port': {
+        'indicator_type': stix.common.vocabs.IndicatorType.TERM_HOST_CHARACTERISTICS,
+        'mapper': _stix_socket_observable
+    },
+    'IPv6.port': {
+        'indicator_type': stix.common.vocabs.IndicatorType.TERM_HOST_CHARACTERISTICS,
+        'mapper': _stix_socket_observable
+    },
+    'hostname': {
+        'indicator_type': stix.common.vocabs.IndicatorType.TERM_DOMAIN_WATCHLIST,
+        'mapper': _stix_hostname_observable
+    },
+    'domain.IPv4': {
+        'indicator_type': stix.common.vocabs.IndicatorType.TERM_IP_WATCHLIST,
+        'mapper': _stix_whois_observable
+    },
+    'domain.IPv6': {
+        'indicator_type': stix.common.vocabs.IndicatorType.TERM_IP_WATCHLIST,
+        'mapper': _stix_whois_observable
     }
 }
 
@@ -465,9 +745,8 @@ class DataFeed(actorbase.ActorBaseFT):
                     value['type'],
                     eindicator
                 ),
-                description='{} indicator from {}'.format(
-                    value['type'],
-                    ', '.join(value['sources'])
+                description='{} indicator from InfoGuard Threat Intel Feed'.format(
+                    value['type']
                 ),
                 timestamp=datetime.utcnow().replace(tzinfo=pytz.utc)
             )

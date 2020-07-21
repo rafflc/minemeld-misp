@@ -18,17 +18,64 @@ LOG = logging.getLogger(__name__)
 _MISP_TO_MINEMELD = {
     'url': 'URL',
     'domain': 'domain',
-    'hostname': 'domain',
+    'domain|ip': 'domain.ip',
+    'hostname': 'hostname',
+    'hostname|port': 'hostname.port',
     'md5': 'md5',
     'sha256': 'sha256',
     'sha1': 'sha1',
     'sha512': 'sha512',
     'ssdeep': 'ssdeep',
+    'imphash': 'imphash',
     'mutex': 'mutex',
     'filename': 'file.name',
     'filename|md5': 'file.name.md5',
-    'email-src': 'email.addr'
+    'filename|sha1': 'file.name.sha1',
+    'filename|sha256': 'file.name.sha256',
+    'filename|ssdeep': 'filen.name.ssdeep',
+    'filename|imphash': 'file.name.imphash',
+    'filename|pehash': 'file.name.pehash',
+    'email-src': 'email',
+    'email-dst': 'email',
+    'named pipe': 'pipe',
+    'pehash': 'pehash',
+    'port': 'port',
+    'windows-service-displayname': 'windows-service-displayname',
+    'windows-service-name': 'windows-service-name',
+    'regkey': 'regkey',
+    'regkey|value': 'regkey.value',
 }
+
+"""
+    Types that should be supported:
+-- domain
+-- domain|ip
+-- filename 	 	 	 
+-- filename|md5 	 	 
+-- filename|sha1 	  	 	 
+-- filename|sha256		 	 	 	 	 
+-- filename|ssdeep
+-- hostname
+-- ip-dst
+-- ip-dst|port
+-- ip-src
+-- ip-src|port
+-- md5
+-- mutex 	 	 	 
+-- named pipe
+-- port
+-- sha1		 	  	 	 
+-- sha256
+-- ssdeep
+-- url
+-- windows-service-displayname
+-- windows-service-name	
+-- regkey
+-- regkey|value
+-- hostname|port	 
+
+"""
+
 
 
 class Miner(BasePollerFT):
@@ -243,27 +290,16 @@ class Miner(BasePollerFT):
                 iv['type'] = self._detect_ip_version(indicator)
                 iv['direction'] = 'inbound'
             elif itype == 'ip-src|port':
-                indicator, _ = indicator.split('|', 1)
-                iv['type'] = self._detect_ip_version(indicator)
+                iv['type'] = self._detect_ip_version(indicator.split('|')[0]) + '.port'
                 iv['direction'] = 'inbound'
             elif itype == 'ip-dst':
                 iv['type'] = self._detect_ip_version(indicator)
                 iv['direction'] = 'outbound'
             elif itype == 'ip-dst|port':
-                indicator, _ = indicator.split('|', 1)
-                iv['type'] = self._detect_ip_version(indicator)
+                iv['type'] = self._detect_ip_version(indicator.split('|')[0]) + '.port'
                 iv['direction'] = 'outbound'
-            #elif itype[:9] == 'filename|':
-            #    indicator, indicator2 = indicator.split('|', 1)
-            #    iv['type'] = 'file.name'
-
-                # If we know the 2nd indicator type, clone the iv as it's the same event, and append it it to results
-                #itype2 = _MISP_TO_MINEMELD.get(itype[9:], None)
-                #if itype2 is not None:
-                #    iv2 = copy.deepcopy(iv)  # Copy IV since it's the same event, just different type
-                #    iv2['type'] = itype2
-                #    result.append([indicator2, iv2])  # Append our second indicator
-
+            elif itype == 'domain|ip':
+                iv['type'] = 'domain.' + self._detect_ip_version(indicator.split('|')[1])
             else:
                 iv['type'] = _MISP_TO_MINEMELD.get(itype, None)
 
