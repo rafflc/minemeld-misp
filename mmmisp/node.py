@@ -26,19 +26,16 @@ _MISP_TO_MINEMELD = {
     'sha1': 'sha1',
     'sha512': 'sha512',
     'ssdeep': 'ssdeep',
-    'imphash': 'imphash',
     'mutex': 'mutex',
     'filename': 'file.name',
     'filename|md5': 'file.name.md5',
     'filename|sha1': 'file.name.sha1',
     'filename|sha256': 'file.name.sha256',
+    'filename|sha512': 'file.name.sha512',
     'filename|ssdeep': 'file.name.ssdeep',
-    'filename|imphash': 'file.name.imphash',
-    'filename|pehash': 'file.name.pehash',
     'email-src': 'email',
     'email-dst': 'email',
     'named pipe': 'pipe',
-    'pehash': 'pehash',
     'port': 'port',
     'windows-service-displayname': 'windows-service-displayname',
     'windows-service-name': 'windows-service-name',
@@ -48,31 +45,33 @@ _MISP_TO_MINEMELD = {
 
 """
     Types that should be supported:
--- domain                       (1)
--- domain|ip                    (1)
--- filename                     (0) ?            - no idea. 	 	 	 
--- filename|md5 	            (1) 	 
--- filename|sha1                (1) 	  	 	 
--- filename|sha256	            (1)	 	 	 	 	 
--- filename|ssdeep              (1)
--- hostname                     (1)
--- ip-dst                       (1)
--- ip-dst|port                  (1)
--- ip-src                       (1)
--- ip-src|port                  (1)
--- md5                          (1)
--- mutex 	                    (1)	 	 
--- named pipe                   (1)
--- port                         (1)
--- sha1	                        (1)	 	  	 	 
--- sha256                       (1)
--- ssdeep                       (1) type other
--- url                          (1)
--- windows-service-displayname  (1)
--- windows-service-name	        (1)
--- regkey                       (1)
--- regkey|value                 (1)
--- hostname|port	            (1)
+-- domain                       (1)                 (1)
+-- domain|ip                    (1)                 (1)
+-- filename                     (1) 	 	 	    (1)
+-- filename|md5 	            (1) 	            (1)
+-- filename|sha1                (1) 	  	 	    (1)
+-- filename|sha256	            (1)	 	 	 	 	(1) 
+-- filename|sha512              (1)                 (1)
+-- filename|ssdeep              (1)                 (1)
+-- hostname                     (1)                 (1)
+-- ip-dst                       (1)                 (1)
+-- ip-dst|port                  (1)                 (1)
+-- ip-src                       (1)                 (1)
+-- ip-src|port                  (1)                 (1)
+-- md5                          (1)                 (1)
+-- mutex 	                    (1)	 	            (1)
+-- named pipe                   (1)                 (1)
+-- port                         (1)                 (1)
+-- sha1	                        (1)	 	  	 	    (1)
+-- sha256                       (1)                 (1)
+-- sha512                       (1)                 (1)
+-- ssdeep                       (1) type other      (1)
+-- url                          (1)                 (1)
+-- windows-service-displayname  (1)                 (1)
+-- windows-service-name	        (1)                 (1)
+-- regkey                       (1)                 (1)
+-- regkey|value                 (1)                 (1)
+-- hostname|port	            (1)                 (1)
 
 """
 
@@ -259,6 +258,8 @@ class Miner(BasePollerFT):
 
         attributes = event.get('Attribute', [])
         for a in attributes:
+            tag = a.get('Tag', [])
+            LOG.info(tag)
             if self.honour_ids_flag:
                 to_ids = a.get('to_ids', False)
                 if not to_ids:

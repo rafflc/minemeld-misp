@@ -205,7 +205,7 @@ def _stix_hash_observable(namespace, indicator, value):
 
     return [o]
 
-# file.name.md5, file.name.sha1, file.name.sha256, file.name.ssdeep
+# file.name.md5, file.name.sha1, file.name.sha256, file.name.ssdeep, file.name.sha512
 def _stix_filename_hash_observable(namespace, indicator, value):
     id_ = '{}:observable-{}'.format(
         namespace,
@@ -484,6 +484,10 @@ _TYPE_MAPPING = {
         'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
         'mapper': _stix_hash_observable
     },
+    'sha512': {
+        'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
+        'mapper': _stix_hash_observable
+    },
     'sha1': {
         'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
         'mapper': _stix_hash_observable
@@ -513,6 +517,10 @@ _TYPE_MAPPING = {
         'mapper': _stix_filename_hash_observable
     },
     'file.name.sha256': {
+        'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
+        'mapper': _stix_filename_hash_observable
+    },
+    'file.name.sha512': {
         'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
         'mapper': _stix_filename_hash_observable
     },
