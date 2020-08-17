@@ -208,6 +208,8 @@ class Miner(BasePollerFT):
 
         r = misp.get_index(filters)
 
+        LOG.info(r)
+
         events = r['response']
 
         return imap(partial(self._load_event, misp), events)
