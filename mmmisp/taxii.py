@@ -194,11 +194,8 @@ def _stix_hash_observable(namespace, indicator, value):
 
     uo = cybox.objects.file_object.File()
     # add_hash automatically detects type of hash using the length of the given
-    # parameter but does not work for ssdeep hashes
-    if ('ssdeep' in value['type']):
-        uo.ssdeep(indicator)
-    else:
-        uo.add_hash(indicator)
+    # parameter. Currently ssdeep hashes are not correctly supported by the library
+    uo.add_hash(indicator)
 
     o = cybox.core.Observable(
         title='{}: {}'.format(value['type'], indicator),
@@ -220,7 +217,8 @@ def _stix_filename_hash_observable(namespace, indicator, value):
     hash = splitted[1]
 
     uo = cybox.objects.file_object.File()
-    # add_hash automatically detects type of hash using the length of the given parameter
+    # add_hash automatically detects type of hash using the length of the given
+    # parameter. Currently ssdeep hashes are not correctly supported by the library
     uo.add_hash(hash)
     uo.file_name = filename
 
