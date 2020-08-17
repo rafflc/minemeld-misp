@@ -32,7 +32,7 @@ _MISP_TO_MINEMELD = {
     'filename|md5': 'file.name.md5',
     'filename|sha1': 'file.name.sha1',
     'filename|sha256': 'file.name.sha256',
-    'filename|ssdeep': 'filen.name.ssdeep',
+    'filename|ssdeep': 'file.name.ssdeep',
     'filename|imphash': 'file.name.imphash',
     'filename|pehash': 'file.name.pehash',
     'email-src': 'email',
@@ -48,31 +48,31 @@ _MISP_TO_MINEMELD = {
 
 """
     Types that should be supported:
--- domain
--- domain|ip
--- filename 	 	 	 
--- filename|md5 	 	 
--- filename|sha1 	  	 	 
--- filename|sha256		 	 	 	 	 
--- filename|ssdeep
--- hostname
--- ip-dst
--- ip-dst|port
--- ip-src
--- ip-src|port
--- md5
--- mutex 	 	 	 
--- named pipe
--- port
--- sha1		 	  	 	 
--- sha256
--- ssdeep
--- url
--- windows-service-displayname
--- windows-service-name	
--- regkey
--- regkey|value
--- hostname|port	 
+-- domain                       (1)
+-- domain|ip                    (0) unknown type - no idea.
+-- filename                     (0) unknown type - should be fixed. 	 	 	 
+-- filename|md5 	            (1) 	 
+-- filename|sha1                (1) 	  	 	 
+-- filename|sha256	            (1)	 	 	 	 	 
+-- filename|ssdeep              (0) unkown type - should be fixed.
+-- hostname                     (0) ?           - no idea.
+-- ip-dst                       (1)
+-- ip-dst|port                  (0) ?           - no idea.
+-- ip-src                       (1)
+-- ip-src|port                  (0) ?           - no idea
+-- md5                          (1)
+-- mutex 	                    (0) ?           - no idea	 	 
+-- named pipe                   (0) ?           - no idea
+-- port                         (0) ?           - no idea
+-- sha1	                        (1)	 	  	 	 
+-- sha256                       (1)
+-- ssdeep                       (1) type other
+-- url                          (1)
+-- windows-service-displayname  (0) ?           - no idea
+-- windows-service-name	        (0) ?           - no idea
+-- regkey                       (0) ?           - no idea
+-- regkey|value                 (0) ?           - no idea
+-- hostname|port	            (0) ?           - no idea
 
 """
 
