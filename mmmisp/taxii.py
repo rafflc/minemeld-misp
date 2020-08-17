@@ -185,7 +185,7 @@ def _stix_url_observable(namespace, indicator, value):
 
     return [o]
 
-# md5, sha1, sha256, ssdeep
+# md5, sha1, sha256, sha512, ssdeep
 def _stix_hash_observable(namespace, indicator, value):
     id_ = '{}:observable-{}'.format(
         namespace,
@@ -193,7 +193,12 @@ def _stix_hash_observable(namespace, indicator, value):
     )
 
     uo = cybox.objects.file_object.File()
-    uo.add_hash(indicator)
+    # add_hash automatically detects type of hash using the length of the given
+    # parameter but does not work for ssdeep hashes
+    if ('ssdeep' in value['type']):
+        uo.ssdeep(indicator)
+    else:
+        uo.add_hash(indicator)
 
     o = cybox.core.Observable(
         title='{}: {}'.format(value['type'], indicator),
