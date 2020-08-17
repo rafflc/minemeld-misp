@@ -14,7 +14,6 @@ from minemeld.ft.basepoller import BasePollerFT
 
 LOG = logging.getLogger(__name__)
 
-
 _MISP_TO_MINEMELD = {
     'url': 'URL',
     'domain': 'domain',
@@ -74,7 +73,6 @@ _MISP_TO_MINEMELD = {
 -- hostname|port	            (1)                 (1)
 
 """
-
 
 
 class Miner(BasePollerFT):
@@ -197,13 +195,15 @@ class Miner(BasePollerFT):
                 mo = self.datefrom_re.match(df)
                 if mo is not None:
                     deltad = int(mo.group(1))
-                    df = datetime.utcfromtimestamp(now/1000 - 86400 * deltad).strftime('%Y-%m-%d')
+                    df = datetime.utcfromtimestamp(now / 1000 - 86400 * deltad).strftime('%Y-%m-%d')
 
                 filters['datefrom'] = df
 
             du = filters.pop('dateuntil', None)
             if du is not None:
                 filters['dateuntil'] = du
+            if 'tag' in filters and 'tlp' in filters['tag']:
+                filters.pop('tag')
         LOG.info('{} - query filters: {!r}'.format(self.name, filters))
 
         r = misp.get_index(filters)
@@ -246,20 +246,19 @@ class Miner(BasePollerFT):
 
             base_value['{}_event_{}'.format(self.prefix, aname)] = eresult
 
-        # check tlp tag
-        tags = event.get('Tag', [])
-        for t in tags:
-            tname = t.get('name', None)
-            if tname is None:
-                continue
-
-            if tname.startswith('tlp:'):
-                base_value['share_level'] = tname[4:]
-
         attributes = event.get('Attribute', [])
         for a in attributes:
-            tag = a.get('Tag', [])
-            LOG.info(tag)
+            # modified such that tlp is taken from attribute and not from event
+            tags = a.get('Tag', [])
+            for t in tags:
+                tname = t.get('name', None)
+                if tname is None:
+                    continue
+
+                if tname.startswith('tlp:'):
+                    filter_tag = tname
+                    base_value['share_level'] = tname[4:]
+
             if self.honour_ids_flag:
                 to_ids = a.get('to_ids', False)
                 if not to_ids:
@@ -308,7 +307,11 @@ class Miner(BasePollerFT):
                 LOG.error('{} - Unhandled indicator type: {!r}'.format(self.name, a))
                 continue
 
-            result.append([indicator, iv])
+            if 'tag' in self.filters and 'tlp' in self.filters['tag']:
+                if self.filters['tag'] == filter_tag:
+                    result.append([indicator, iv])
+            else:
+                result.append([indicator, iv])
 
             if self.indicator_types is not None:
                 result = [[ti, tiv] for ti, tiv in result if tiv['type'] in self.indicator_types]

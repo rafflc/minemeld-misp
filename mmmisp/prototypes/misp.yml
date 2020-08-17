@@ -1,10 +1,15 @@
 url: https://www.misp-project.org/
 description: >
-  MineMeld nodes for MISP Threat Intelligence Platform.
+  MISP miner nodes. They support the following MISP-types:
+
+  URL, domain, domain.ip, hostname, hostname.port, md5, sha1, sha256, sha512, ssdeep, mutex, filename,
+  filename|md5, filename|sha1, filename|sha256, filename|sha512, filename|ssdeep, email-src, email-dst,
+  named pipe, port, windows-service-displayname, windwos-service-name, regkey, regkey|value
 
 prototypes:
-  tlpWhiteEvent:
-    author: Palo Alto Networks TBD
+
+  tlpWhiteAttributes:
+    author: InfoGuard AG
     class: mmmisp.Miner
     development_status: EXPERIMENTAL
     node_type: miner
@@ -13,37 +18,30 @@ prototypes:
     tags:
       - extension
       - misp
+      - white
     description: >
-      Miner for MISP. This will extract all published events with tlp:white tag.
+      Miner for MISP. This will extract all attributes with tlp:white tag.
     config:
-      # source name used in the indicators
-      source_name: misp.tlpWhiteEvent
-      # filters for MISP query
-      # default: none
-      # this one check for published events with tag tlp:white
+      source_name: InfoGuard.misp.white
       filters:
-        published: 1
         tag: 'tlp:white'
-        datefrom: 180d
-        # datefrom: YYYY-MM-DD
-      # select specific inidicator types, default: null (any)
+        # Fetches all events not older than 20 days.
+        datefrom: 20d
+      # Fetches indicator of all types.
       indicator_types: null
-      # verify remote certificate, default true
+      # Verify remote certificate.
       verify_cert: true
       # age out of indicators
       # disabled, removed when they disappear from the channel
       age_out:
         sudden_death: true
         default: null
-      # flag indicators with share level white, if not specified
-      # by tag
       attributes:
         confidence: 70
-        # if not specified in the event, default is white for
-        # this prototype
         share_level: white
-  anyEvent:
-    author: Palo Alto Networks TBD
+
+  tlpGreenAttributes:
+    author: InfoGuard AG
     class: mmmisp.Miner
     development_status: EXPERIMENTAL
     node_type: miner
@@ -52,18 +50,121 @@ prototypes:
     tags:
       - extension
       - misp
+      - green
     description: >
-      Miner for MISP. This will extract any event and mark them
-      as share level red
+      Miner for MISP. This will extract all attributes with tlp:green tag.
     config:
-      # source name used in the indicators
-      source_name: misp.anyEvent
-      filters: null
+      source_name: InfoGuard.misp.green
+      filters:
+        tag: 'tlp:green'
+        # Fetches all events not older than 20 days.
+        datefrom: 20d
+      # Fetches indicator of all types.
       indicator_types: null
+      # Verify remote certificate.
       verify_cert: true
+      # age out of indicators
+      # disabled, removed when they disappear from the channel
       age_out:
         sudden_death: true
         default: null
       attributes:
-        confidence: 70
+        confidence: 80
+        share_level: green
+
+  tlpAmberAttributes:
+    author: InfoGuard AG
+    class: mmmisp.Miner
+    development_status: EXPERIMENTAL
+    node_type: miner
+    indicator_types:
+      - any
+    tags:
+      - extension
+      - misp
+      - amber
+    description: >
+      Miner for MISP. This will extract all attributes with tlp:amber tag.
+    config:
+      source_name: InfoGuard.misp.amber
+      filters:
+        tag: 'tlp:amber'
+        # Fetches all events not older than 20 days.
+        datefrom: 20d
+      # Fetches indicator of all types.
+      indicator_types: null
+      # Verify remote certificate.
+      verify_cert: true
+      # age out of indicators
+      # disabled, removed when they disappear from the channel
+      age_out:
+        sudden_death: true
+        default: null
+      attributes:
+        confidence: 80
+        share_level: amber
+
+  tlpRedAttributes:
+    author: InfoGuard AG
+    class: mmmisp.Miner
+    development_status: EXPERIMENTAL
+    node_type: miner
+    indicator_types:
+      - any
+    tags:
+      - extension
+      - misp
+      - red
+    description: >
+      Miner for MISP. This will extract all attributes with tlp:red tag.
+    config:
+      source_name: InfoGuard.misp.red
+      filters:
+        tag: 'tlp:red'
+        # Fetches all events not older than 20 days.
+        datefrom: 20d
+      # Fetches indicator of all types.
+      indicator_types: null
+      # Verify remote certificate.
+      verify_cert: true
+      # age out of indicators
+      # disabled, removed when they disappear from the channel
+      age_out:
+        sudden_death: true
+        default: null
+      attributes:
+        confidence: 80
+        share_level: red
+
+  allAttributes:
+    author: InfoGuard AG
+    class: mmmisp.Miner
+    development_status: EXPERIMENTAL
+    node_type: miner
+    indicator_types:
+      - any
+    tags:
+      - extension
+      - misp
+      - any
+    description: >
+      Miner for MISP. This will extract any attribute and mark them
+      with share level red
+    config:
+      # source name used in the indicators
+      source_name: InfoGuard.misp.any
+      filters:
+        # Fetches all events not older than 20 days.
+        datefrom: 20d
+      # Fetches indicator of all types.
+      indicator_types: null
+      # Verify remote certificate.
+      verify_cert: true
+      # age out of indicators
+      # disabled, removed when they disappear from the channel
+      age_out:
+        sudden_death: true
+        default: null
+      attributes:
+        confidence: 80
         share_level: red

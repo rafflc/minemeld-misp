@@ -1,10 +1,15 @@
 url:
 description: >
-  Custom TAXII DataFeed supporting additional types in combination with MISP.
+  TAXII DataFeed output nodes. If used together with the MISP miner node, it supports the following MISP-types:
+
+  URL, domain, domain.ip, hostname, hostname.port, md5, sha1, sha256, sha512, ssdeep, mutex, filename,
+  filename|md5, filename|sha1, filename|sha256, filename|sha512, filename|ssdeep, email-src, email-dst,
+  named pipe, port, windows-service-displayname, windwos-service-name, regkey, regkey|value
 
 prototypes:
+
     extendedTaxiiDataFeed:
-        author: Raffl Christopher
+        author: InfoGuard AG
         development_status: EXPERIMENTAL
         node_type: output
         indicator_types:
@@ -12,6 +17,114 @@ prototypes:
         tags:
           - extension
           - TAXII
-        description: extended TAXII DataFeed
+        description: TAXII DataFeed for all share levels
         class: mmmisp.taxii.DataFeed
         config: {}
+
+    whiteTaxiiDataFeed:
+        author: InfoGuard AG
+        development_status: EXPERIMENTAL
+        node_type: output
+        indicator_types:
+            - any
+        tags:
+            - TAXII
+            - white
+        description: TAXII DataFeed for IoCs with share level white
+        class: mmmisp.taxii.DataFeed
+        config:
+            infilters:
+                -   name: accept withdraws
+                    conditions:
+                        - __method == 'withdraw'
+                    actions:
+                        - accept
+                -   name: accept share level white
+                    conditions:
+                        - share_level == 'white'
+                    actions:
+                        - accept
+                -   name: drop rest
+                    actions:
+                        - drop
+
+    greenTaxiiDataFeed:
+        author: InfoGuard AG
+        development_status: EXPERIMENTAL
+        node_type: output
+        indicator_types:
+            - any
+        tags:
+            - TAXII
+            - green
+        description: TAXII DataFeed for IoCs with share level green
+        class: mmmisp.taxii.DataFeed
+        config:
+            infilters:
+                -   name: accept withdraws
+                    conditions:
+                        - __method == 'withdraw'
+                    actions:
+                        - accept
+                -   name: accept share level green
+                    conditions:
+                        - share_level == 'green'
+                    actions:
+                        - accept
+                -   name: drop rest
+                    actions:
+                        - drop
+
+    amberTaxiiDataFeed:
+        author: InfoGuard AG
+        development_status: EXPERIMENTAL
+        node_type: output
+        indicator_types:
+            - any
+        tags:
+            - TAXII
+            - amber
+        description: TAXII DataFeed for IoCs with share level amber
+        class: mmmisp.taxii.DataFeed
+        config:
+            infilters:
+                -   name: accept withdraws
+                    conditions:
+                        - __method == 'withdraw'
+                    actions:
+                        - accept
+                -   name: accept share level amber
+                    conditions:
+                        - share_level == 'amber'
+                    actions:
+                        - accept
+                -   name: drop rest
+                    actions:
+                        - drop
+
+    redTaxiiDataFeed:
+        author: InfoGuard AG
+        development_status: EXPERIMENTAL
+        node_type: output
+        indicator_types:
+            - any
+        tags:
+            - TAXII
+            - red
+        description: TAXII DataFeed for IoCs with share level red
+        class: mmmisp.taxii.DataFeed
+        config:
+            infilters:
+                -   name: accept withdraws
+                    conditions:
+                        - __method == 'withdraw'
+                    actions:
+                        - accept
+                -   name: accept share level red
+                    conditions:
+                        - share_level == 'red'
+                    actions:
+                        - accept
+                -   name: drop rest
+                    actions:
+                        - drop
