@@ -219,6 +219,25 @@ def _stix_filename_hash_observable(namespace, indicator, value):
 
     return [o]
 
+# file.name
+
+def _stix_filename_observable(namespace, indicator, value):
+    id_ = '{}:observable-{}'.format(
+        namespace,
+        uuid.uuid4()
+    )
+
+    uo = cybox.objects.file_object.File()
+    uo.file_name = indicator
+
+    o = cybox.core.Observable(
+        title='{}: {}'.format(value['type'], indicator),
+        id_=id_,
+        item=uo
+    )
+
+    return [o]
+
 # mutex
 def _stix_mutex_observable(namespace, indicator, value):
     id_ = '{}:observable-{}'.format(
@@ -320,6 +339,7 @@ def _stix_registry_key_observable(namespace, indicator, value):
 
     return [o]
 
+# hostname
 def _stix_hostname_observable(namespace, indicator, value):
     id_ = '{}:observable-{}'.format(
         namespace,
@@ -337,6 +357,7 @@ def _stix_hostname_observable(namespace, indicator, value):
 
     return [o]
 
+# hostname.port, IPv4.port, IPv6.port
 def _stix_socket_observable(namespace, indicator, value):
     id_ = '{}:observable-{}'.format(
         namespace,
@@ -386,6 +407,7 @@ def _stix_socket_observable(namespace, indicator, value):
 
     return [o]
 
+# domain.IPv4, domain.IPv6
 def _stix_whois_observable(namespace, indicator, value):
     id_ = '{}:observable-{}'.format(
         namespace,
@@ -466,6 +488,10 @@ _TYPE_MAPPING = {
     'email': {
         'indicator_type': stix.common.vocabs.IndicatorType.TERM_MALICIOUS_EMAIL,
         'mapper': _stix_email_addr_observable
+    },
+    'file.name': {
+        'indicator_type': stix.common.vocabs.IndicatorType.TERM_MALWARE_ARTIFACTS,
+        'mapper:': _stix_filename_observable
     },
     'file.name.md5': {
         'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
