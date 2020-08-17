@@ -53,6 +53,14 @@ import cybox.objects.address_object
 import cybox.objects.domain_name_object
 import cybox.objects.uri_object
 import cybox.objects.file_object
+import cybox.objects.mutex_object
+import cybox.objects.pipe_object
+import cybox.objects.port_object
+import cybox.objects.win_service_object
+import cybox.objects.win_registry_key_object
+import cybox.objects.hostname_object
+import cybox.objects.socket_address_object
+import cybox.objects.whois_object
 
 import mixbox.idgen
 import mixbox.namespaces

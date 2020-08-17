@@ -50,11 +50,11 @@ _MISP_TO_MINEMELD = {
     Types that should be supported:
 -- domain                       (1)
 -- domain|ip                    (0) unknown type - no idea.
--- filename                     (0) unknown type - should be fixed. 	 	 	 
+-- filename                     (0) ?            - no idea. 	 	 	 
 -- filename|md5 	            (1) 	 
 -- filename|sha1                (1) 	  	 	 
 -- filename|sha256	            (1)	 	 	 	 	 
--- filename|ssdeep              (0) unkown type - should be fixed.
+-- filename|ssdeep              (1)
 -- hostname                     (0) ?           - no idea.
 -- ip-dst                       (1)
 -- ip-dst|port                  (0) ?           - no idea.
