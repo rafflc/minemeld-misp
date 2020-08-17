@@ -202,8 +202,8 @@ class Miner(BasePollerFT):
             du = filters.pop('dateuntil', None)
             if du is not None:
                 filters['dateuntil'] = du
-            if 'tag' in filters and 'tlp' in filters['tag']:
-                filters.pop('tag')
+            #if 'tag' in filters and 'tlp' in filters['tag']:
+            #    filters.pop('tag')
         LOG.info('{} - query filters: {!r}'.format(self.name, filters))
 
         r = misp.get_index(filters)
