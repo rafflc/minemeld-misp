@@ -499,7 +499,7 @@ _TYPE_MAPPING = {
     },
     'file.name': {
         'indicator_type': stix.common.vocabs.IndicatorType.TERM_MALWARE_ARTIFACTS,
-        'mapper:': _stix_filename_observable
+        'mapper': _stix_filename_observable
     },
     'file.name.md5': {
         'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,

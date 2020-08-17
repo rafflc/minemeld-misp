@@ -49,30 +49,30 @@ _MISP_TO_MINEMELD = {
 """
     Types that should be supported:
 -- domain                       (1)
--- domain|ip                    (0) unknown type - no idea.
+-- domain|ip                    (1)
 -- filename                     (0) ?            - no idea. 	 	 	 
 -- filename|md5 	            (1) 	 
 -- filename|sha1                (1) 	  	 	 
 -- filename|sha256	            (1)	 	 	 	 	 
 -- filename|ssdeep              (1)
--- hostname                     (0) ?           - no idea.
+-- hostname                     (1)
 -- ip-dst                       (1)
--- ip-dst|port                  (0) ?           - no idea.
+-- ip-dst|port                  (1)
 -- ip-src                       (1)
--- ip-src|port                  (0) ?           - no idea
+-- ip-src|port                  (1)
 -- md5                          (1)
--- mutex 	                    (0) ?           - no idea	 	 
--- named pipe                   (0) ?           - no idea
--- port                         (0) ?           - no idea
+-- mutex 	                    (1)	 	 
+-- named pipe                   (1)
+-- port                         (1)
 -- sha1	                        (1)	 	  	 	 
 -- sha256                       (1)
 -- ssdeep                       (1) type other
 -- url                          (1)
--- windows-service-displayname  (0) ?           - no idea
--- windows-service-name	        (0) ?           - no idea
--- regkey                       (0) ?           - no idea
--- regkey|value                 (0) ?           - no idea
--- hostname|port	            (0) ?           - no idea
+-- windows-service-displayname  (1)
+-- windows-service-name	        (1)
+-- regkey                       (1)
+-- regkey|value                 (1)
+-- hostname|port	            (1)
 
 """
 
