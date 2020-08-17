@@ -250,6 +250,7 @@ class Miner(BasePollerFT):
         for a in attributes:
             # modified such that tlp is taken from attribute and not from event
             tags = a.get('Tag', [])
+            filter_tag = ''
             for t in tags:
                 tname = t.get('name', None)
                 if tname is None:
@@ -310,6 +311,8 @@ class Miner(BasePollerFT):
             if 'tag' in self.filters and 'tlp' in self.filters['tag']:
                 if self.filters['tag'] == filter_tag:
                     result.append([indicator, iv])
+                else:
+                    LOG.error('Tag found, but they are not the same:' + self.filters['tag'] + ' vs. ' + filter_tag)
             else:
                 result.append([indicator, iv])
 
