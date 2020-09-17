@@ -252,7 +252,7 @@ class Miner(BasePollerFT):
         attributes = event.get('Attribute', [])
 
         # Get timestamp of "datefrom" filter
-        mo = self.datefrom_re.match(filters['timestamp'])
+        mo = self.datefrom_re.match(self.filters['timestamp'])
         if mo is not None:
             deltad = int(mo.group(1))
             df = datetime.utcfromtimestamp(now / 1000 - 86400 * deltad).strftime('%Y-%m-%d')
