@@ -251,6 +251,7 @@ class Miner(BasePollerFT):
 
         attributes = event.get('Attribute', [])
         for a in attributes:
+            LOG.info('{} - New attribute: {!r}'.format(self.name, a))
             # modified such that tlp is taken from attribute and not from event
             tags = a.get('Tag', [])
             filter_tag = ''
@@ -317,6 +318,8 @@ class Miner(BasePollerFT):
                 continue
 
             result.append([indicator, iv])
+
+            LOG.info('Added')
 
             if self.indicator_types is not None:
                 result = [[ti, tiv] for ti, tiv in result if tiv['type'] in self.indicator_types]
