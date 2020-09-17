@@ -190,14 +190,15 @@ class Miner(BasePollerFT):
         if self.filters is not None:
             filters = self.filters.copy()
             if 'datefrom' in filters:
-                df = filters.pop('datefrom')
-
-                mo = self.datefrom_re.match(df)
-                if mo is not None:
-                    deltad = int(mo.group(1))
-                    df = datetime.utcfromtimestamp(now / 1000 - 86400 * deltad).strftime('%Y-%m-%d')
-
-                filters['datefrom'] = df
+                filters['timestamp'] = filters.pop('datefrom')
+                # df = filters.pop('datefrom')
+                #
+                # mo = self.datefrom_re.match(df)
+                # if mo is not None:
+                #     deltad = int(mo.group(1))
+                #     df = datetime.utcfromtimestamp(now / 1000 - 86400 * deltad).strftime('%Y-%m-%d')
+                #
+                # filters['datefrom'] = df
 
             du = filters.pop('dateuntil', None)
             if du is not None:
