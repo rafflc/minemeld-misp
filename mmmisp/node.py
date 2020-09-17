@@ -252,7 +252,7 @@ class Miner(BasePollerFT):
         attributes = event.get('Attribute', [])
 
         # Get timestamp of "datefrom" filter
-        mo = self.datefrom_re.match(self.filters['timestamp'])
+        mo = self.datefrom_re.match(self.filters['datefrom'])
         if mo is not None:
             deltad = int(mo.group(1))
             df = datetime.utcfromtimestamp(now / 1000 - 86400 * deltad).strftime('%Y-%m-%d')
@@ -262,7 +262,7 @@ class Miner(BasePollerFT):
             LOG.info('{} - New attribute: {!r}'.format(self.name, a))
             # check if timestamp is older than given filter
             if mo is not None:
-                last_edited = a.get('timestamp')
+                last_edited = a.get('timestamp', None)
                 if ts > last_edited:
                     continue
             # modified such that tlp is taken from attribute and not from event
