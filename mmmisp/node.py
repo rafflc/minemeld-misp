@@ -263,6 +263,10 @@ class Miner(BasePollerFT):
                     filter_tag = tname
                     base_value['share_level'] = tname[4:]
 
+            if filter_tag == '':
+                LOG.error('{} - attribute with no tlp-tag: {!r}'.format(self.name, a))
+                continue
+
             if self.honour_ids_flag:
                 to_ids = a.get('to_ids', False)
                 if not to_ids:
@@ -311,13 +315,7 @@ class Miner(BasePollerFT):
                 LOG.error('{} - Unhandled indicator type: {!r}'.format(self.name, a))
                 continue
 
-            if 'tag' in self.filters and 'tlp' in self.filters['tag']:
-                if self.filters['tag'] == filter_tag:
-                    result.append([indicator, iv])
-                else:
-                    LOG.error('Tag found, but they are not the same:' + self.filters['tag'] + ' vs. ' + filter_tag)
-            else:
-                result.append([indicator, iv])
+            result.append([indicator, iv])
 
             if self.indicator_types is not None:
                 result = [[ti, tiv] for ti, tiv in result if tiv['type'] in self.indicator_types]
