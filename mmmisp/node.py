@@ -261,10 +261,12 @@ class Miner(BasePollerFT):
             LOG.info('{} - New attribute: {!r}'.format(self.name, a))
             # check if timestamp is older than "datefrom" filter
             if self.filters is not None and 'datefrom' in self.filters:
-                LOG.info('I found a datefrom, ' + str(limit))
+                LOG.info('I found a datefrom, ' + str(limit) + str(last_edited))
                 last_edited = a.get('timestamp', None)
                 if limit > last_edited:
+                    LOG.info("Been here")
                     continue
+            LOG.info('ignored that shit')
             # modified such that tlp is taken from attribute and not from event
             tags = a.get('Tag', [])
             filter_tag = ''
