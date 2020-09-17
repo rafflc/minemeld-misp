@@ -5,7 +5,7 @@ import copy
 from functools import partial
 from itertools import imap
 from datetime import datetime
-from time import time
+import time
 
 import yaml
 import jmespath
