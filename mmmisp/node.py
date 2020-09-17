@@ -4,7 +4,7 @@ import re
 import copy
 from functools import partial
 from itertools import imap
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import yaml
 import jmespath
@@ -252,18 +252,17 @@ class Miner(BasePollerFT):
         attributes = event.get('Attribute', [])
 
         # Get timestamp of "datefrom" filter
-        mo = self.datefrom_re.match(self.filters['datefrom'])
-        if mo is not None:
-            deltad = int(mo.group(1))
-            df = datetime.utcfromtimestamp(now / 1000 - 86400 * deltad).strftime('%Y-%m-%d')
-            ts = datetime.timestamp(df)
+        if 'datefrom' in self.filters:
+            now = datetime.now()
+            limit = now - timedelta(days=int(self.filters['datefrom'][:-1]))
+            limit_ts = datetime.timestamp(limit)
 
         for a in attributes:
             LOG.info('{} - New attribute: {!r}'.format(self.name, a))
-            # check if timestamp is older than given filter
-            if mo is not None:
+            # check if timestamp is older than "datefrom" filter
+            if 'datefrom' in self.filters:
                 last_edited = a.get('timestamp', None)
-                if ts > last_edited:
+                if limit_ts > last_edited:
                     continue
             # modified such that tlp is taken from attribute and not from event
             tags = a.get('Tag', [])
