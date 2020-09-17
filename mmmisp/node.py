@@ -260,7 +260,8 @@ class Miner(BasePollerFT):
         for a in attributes:
             LOG.info('{} - New attribute: {!r}'.format(self.name, a))
             # check if timestamp is older than "datefrom" filter
-            if 'datefrom' in self.filters:
+            if self.filters is not None and 'datefrom' in self.filters:
+                LOG.info('I found a datefrom, ' + str(limit))
                 last_edited = a.get('timestamp', None)
                 if limit > last_edited:
                     continue
