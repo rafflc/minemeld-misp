@@ -253,7 +253,7 @@ class Miner(BasePollerFT):
         attributes = event.get('Attribute', [])
 
         # Get timestamp of "datefrom" filter
-        if 'datefrom' in self.filters:
+        if self.filters is not None and 'datefrom' in self.filters:
             now = int(time.time())
             limit = now - 86400 * int(self.filters['datefrom'][:-1])
 
