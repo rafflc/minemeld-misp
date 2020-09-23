@@ -204,8 +204,10 @@ class Miner(BasePollerFT):
             du = filters.pop('dateuntil', None)
             if du is not None:
                 filters['dateuntil'] = du
-            if 'tag' in filters and 'tlp' in filters['tag']:
-                filters.pop('tag')
+            if 'tag' in filters:
+                for tag in filters['tag']:
+                    if 'tlp' in tag:
+                        filters['tag'].pop(tag)
         LOG.info('{} - query filters: {!r}'.format(self.name, filters))
 
         r = misp.get_index(filters)
@@ -262,11 +264,9 @@ class Miner(BasePollerFT):
             # check if timestamp is older than "datefrom" filter
             if self.filters is not None and 'datefrom' in self.filters:
                 last_edited = int(a.get('timestamp', None))
-                LOG.info('I found a datefrom, ' + str(limit) + str(last_edited))
                 if limit > last_edited:
-                    LOG.info("Been here")
+                    LOG.info("Entry too old - discarded")
                     continue
-            LOG.info('ignored that shit')
             # modified such that tlp is taken from attribute and not from event
             tags = a.get('Tag', [])
             filter_tag = ''
