@@ -280,9 +280,10 @@ class Miner(BasePollerFT):
                     base_value['share_level'] = tname[4:]
 
             drop = False
-            for tag in self.filters['attribute_tags']:
-                if tag not in attribute_tags:
-                    drop = True
+            if 'attribute_tags' in self.filters:
+                for tag in self.filters['attribute_tags']:
+                    if tag not in attribute_tags:
+                        drop = True
 
             if drop:
                 continue
