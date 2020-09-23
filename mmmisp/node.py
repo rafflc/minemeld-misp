@@ -281,8 +281,10 @@ class Miner(BasePollerFT):
 
             drop = False
             if 'attribute_tags' in self.filters:
+                LOG.info('Attribute tags: ' + attribute_tags)
                 for tag in self.filters['attribute_tags']:
                     if tag not in attribute_tags:
+                        LOG.info('Not found: ' + tag)
                         drop = True
 
             if drop:
