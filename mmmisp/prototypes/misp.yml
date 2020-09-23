@@ -195,7 +195,7 @@ prototypes:
     config:
       source_name: InfoGuard.misp.red
       filters:
-        tags: 'tlp:red, HOT'
+        tag: 'HOT'
         # Fetches all events not older than 20 days.
         datefrom: 20d
         # Fetches only published events
