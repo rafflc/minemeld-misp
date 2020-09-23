@@ -24,7 +24,7 @@ prototypes:
     config:
       source_name: InfoGuard.misp.white
       filters:
-        tag: 'tlp:white'
+        tags: 'tlp:white'
         # Fetches all events not older than 20 days.
         datefrom: 20d
         # Fetches only published events
@@ -58,7 +58,7 @@ prototypes:
     config:
       source_name: InfoGuard.misp.green
       filters:
-        tag: 'tlp:green'
+        tags: 'tlp:green'
         # Fetches all events not older than 20 days.
         datefrom: 20d
         # Fetches only published events
@@ -92,7 +92,7 @@ prototypes:
     config:
       source_name: InfoGuard.misp.amber
       filters:
-        tag: 'tlp:amber'
+        tags: 'tlp:amber'
         # Fetches all events not older than 20 days.
         datefrom: 20d
         # Fetches only published events
@@ -126,7 +126,7 @@ prototypes:
     config:
       source_name: InfoGuard.misp.red
       filters:
-        tag: 'tlp:red'
+        tags: 'tlp:red'
         # Fetches all events not older than 20 days.
         datefrom: 20d
         # Fetches only published events
@@ -195,7 +195,7 @@ prototypes:
     config:
       source_name: InfoGuard.misp.red
       filters:
-        tag: 'tlp:red, HOT'
+        tags: 'tlp:red, HOT'
         # Fetches all events not older than 20 days.
         datefrom: 20d
         # Fetches only published events
