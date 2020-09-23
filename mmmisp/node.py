@@ -204,10 +204,8 @@ class Miner(BasePollerFT):
             du = filters.pop('dateuntil', None)
             if du is not None:
                 filters['dateuntil'] = du
-            if 'tags' in filters:
-                for tag in filters['tags']:
-                    if 'tlp' in tag:
-                        filters['tags'].pop(tag)
+            if 'event-tags' in filters and filters['event-tags']:
+                filters['tags'] = filters['event-tags']
         LOG.info('{} - query filters: {!r}'.format(self.name, filters))
 
         r = misp.get_index(filters)
@@ -269,19 +267,24 @@ class Miner(BasePollerFT):
                     continue
             # modified such that tlp is taken from attribute and not from event
             tags = a.get('Tag', [])
-            filter_tag = ''
+            attribute_tags = []
             for t in tags:
                 tname = t.get('name', None)
                 LOG.info('Found tag ' + tname)
                 if tname is None:
                     continue
+                attribute_tags.append(tname)
 
                 if tname.startswith('tlp:'):
                     filter_tag = tname
                     base_value['share_level'] = tname[4:]
 
-            if filter_tag == '':
-                LOG.error('{} - attribute with no tlp-tag: {!r}'.format(self.name, a))
+            drop = False
+            for tag in self.filters['attribute-tags']:
+                if tag not in attribute_tags:
+                    drop = True
+
+            if drop:
                 continue
 
             if self.honour_ids_flag:

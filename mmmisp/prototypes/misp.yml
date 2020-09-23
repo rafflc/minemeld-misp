@@ -24,7 +24,10 @@ prototypes:
     config:
       source_name: InfoGuard.misp.white
       filters:
-        tags: 'tlp:white'
+        # tags on event
+        event-tags:
+        # tags on attribute
+        attribute-tags: 'tlp:white'
         # Fetches all events not older than 20 days.
         datefrom: 20d
         # Fetches only published events
@@ -58,7 +61,10 @@ prototypes:
     config:
       source_name: InfoGuard.misp.green
       filters:
-        tags: 'tlp:green'
+        # tags on event
+        event-tags:
+        # tags on attribute
+        attribute-tags: 'tlp:green'
         # Fetches all events not older than 20 days.
         datefrom: 20d
         # Fetches only published events
@@ -92,7 +98,10 @@ prototypes:
     config:
       source_name: InfoGuard.misp.amber
       filters:
-        tags: 'tlp:amber'
+        # tags on event
+        event-tags:
+        # tags on attribute
+        attribute-tags: 'tlp:amber'
         # Fetches all events not older than 20 days.
         datefrom: 20d
         # Fetches only published events
@@ -126,7 +135,10 @@ prototypes:
     config:
       source_name: InfoGuard.misp.red
       filters:
-        tags: 'tlp:red'
+        # tags on event
+        event-tags:
+        # tags on attribute
+        attribute-tags: 'tlp:red'
         # Fetches all events not older than 20 days.
         datefrom: 20d
         # Fetches only published events
@@ -191,11 +203,14 @@ prototypes:
       - misp
       - red
     description: >
-      Miner for MISP. This will extract all attributes with tlp:red and HOT tag.
+      Miner for MISP. This will extract all attributes with tlp:red from all events with tag.
     config:
       source_name: InfoGuard.misp.red
       filters:
-        tags: 'HOT'
+        # tags on event
+        event-tags: 'HOT'
+        # tags on attribute
+        attribute-tags: 'tlp:red'
         # Fetches all events not older than 20 days.
         datefrom: 20d
         # Fetches only published events
