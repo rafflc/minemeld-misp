@@ -204,8 +204,8 @@ class Miner(BasePollerFT):
             du = filters.pop('dateuntil', None)
             if du is not None:
                 filters['dateuntil'] = du
-            if 'event-tags' in filters and filters['event-tags']:
-                filters['tags'] = filters['event-tags']
+            if 'event_tags' in filters and filters['event_tags']:
+                filters['tags'] = filters['event_tags']
         LOG.info('{} - query filters: {!r}'.format(self.name, filters))
 
         r = misp.get_index(filters)
@@ -280,7 +280,7 @@ class Miner(BasePollerFT):
                     base_value['share_level'] = tname[4:]
 
             drop = False
-            for tag in self.filters['attribute-tags']:
+            for tag in self.filters['attribute_tags']:
                 if tag not in attribute_tags:
                     drop = True
 
