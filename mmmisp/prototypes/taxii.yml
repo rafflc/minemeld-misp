@@ -21,6 +21,15 @@ prototypes:
         class: mmmisp.taxii.DataFeed
         config:
             age_out_interval: 30d
+            infilters:
+                -   name: accept withdraws
+                    conditions:
+                        - __method == 'withdraw'
+                    actions:
+                        - accept
+                -   name: accept rest
+                    actions:
+                        - accept
 
     whiteTaxiiDataFeed:
         author: InfoGuard AG
