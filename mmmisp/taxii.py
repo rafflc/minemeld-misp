@@ -832,6 +832,7 @@ class DataFeed(actorbase.ActorBaseFT):
             p.hdel(self.redis_skey_value, indicator_id)
 
             result = p.execute()[0]
+            LOG.info("Removed in this iteration: " + result)
 
         self.statistics['removed'] += result
 
@@ -871,7 +872,7 @@ class DataFeed(actorbase.ActorBaseFT):
     @base._counting('withdraw.processed')
     def filtered_withdraw(self, source=None, indicator=None, value=None):
         LOG.info(
-            self.name + "  - deleting indicator: " + indicator
+            self.name + "  - deleting indicator: " + indicator + ": " + value
         )
         self._delete_indicator(indicator)
 
