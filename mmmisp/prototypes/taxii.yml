@@ -19,7 +19,8 @@ prototypes:
           - TAXII
         description: TAXII DataFeed for all share levels
         class: mmmisp.taxii.DataFeed
-        config: {}
+        config:
+            age_out_interval: 30d
 
     whiteTaxiiDataFeed:
         author: InfoGuard AG
@@ -33,6 +34,7 @@ prototypes:
         description: TAXII DataFeed for IoCs with share level white
         class: mmmisp.taxii.DataFeed
         config:
+            age_out_interval: 30d
             infilters:
                 -   name: accept withdraws
                     conditions:
@@ -60,6 +62,7 @@ prototypes:
         description: TAXII DataFeed for IoCs with share level green
         class: mmmisp.taxii.DataFeed
         config:
+            age_out_interval: 30d
             infilters:
                 -   name: accept withdraws
                     conditions:
@@ -87,6 +90,7 @@ prototypes:
         description: TAXII DataFeed for IoCs with share level amber
         class: mmmisp.taxii.DataFeed
         config:
+            age_out_interval: 30d
             infilters:
                 -   name: accept withdraws
                     conditions:
@@ -114,6 +118,7 @@ prototypes:
         description: TAXII DataFeed for IoCs with share level red
         class: mmmisp.taxii.DataFeed
         config:
+            age_out_interval: 30d
             infilters:
                 -   name: accept withdraws
                     conditions:
