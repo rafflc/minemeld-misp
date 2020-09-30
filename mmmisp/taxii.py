@@ -868,10 +868,10 @@ class DataFeed(actorbase.ActorBaseFT):
 
         self._add_indicator(now, indicator, value)
 
-    @base._counting('withdraw.ignored')
+    @base._counting('withdraw.processed')
     def filtered_withdraw(self, source=None, indicator=None, value=None):
         # this is a TAXII data feed, old indicators never expire
-        pass
+        self._delete_indicator()
 
     def length(self, source=None):
         return self.SR.zcard(self.redis_skey)
