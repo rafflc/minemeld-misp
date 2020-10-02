@@ -20,7 +20,7 @@ prototypes:
         description: TAXII DataFeed for all share levels
         class: mmmisp.taxii.DataFeed
         config:
-            age_out_interval: 30d
+            age_out_interval: 1d
             infilters:
                 -   name: accept withdraws
                     conditions:
