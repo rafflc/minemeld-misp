@@ -690,7 +690,11 @@ class DataFeed(actorbase.ActorBaseFT):
         else:
             ind_value = indicator
 
+        LOG.info("Deleting indicator " + ind_value)
+
         self._delete_indicator(ind_value)
+
+        LOG.info("Adding same indicator again")
 
         if self.length() >= self.max_entries:
             LOG.info('dropped overflow')
