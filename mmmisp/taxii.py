@@ -684,6 +684,14 @@ class DataFeed(actorbase.ActorBaseFT):
         self.SR.delete(self.redis_skey_value)
 
     def _add_indicator(self, score, indicator, value):
+
+        if value['type'] == 'URL':
+            ind_value = werkzeug.urls.iri_to_uri(indicator, safe_conversion=True)
+        else:
+            ind_value = indicator
+
+        self._delete_indicator(ind_value)
+
         if self.length() >= self.max_entries:
             LOG.info('dropped overflow')
             self.statistics['drop.overflow'] += 1
@@ -817,8 +825,8 @@ class DataFeed(actorbase.ActorBaseFT):
         with self.SR.pipeline() as p:
             p.multi()
 
-            p.zadd(self.redis_skey, score, spid)
-            p.hset(self.redis_skey_value, spid, spackage)
+            p.zadd(self.redis_skey, score, eindicator)
+            p.hset(self.redis_skey_value, eindicator, spackage)
 
             result = p.execute()[0]
 
@@ -872,7 +880,7 @@ class DataFeed(actorbase.ActorBaseFT):
     @base._counting('withdraw.processed')
     def filtered_withdraw(self, source=None, indicator=None, value=None):
         LOG.info(
-            self.name + "  - deleting indicator: " + indicator + ": " + value
+            self.name + "  - deleting indicator: " + indicator + ": " + str(value)
         )
         self._delete_indicator(indicator)
 
