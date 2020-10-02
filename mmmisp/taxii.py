@@ -840,7 +840,7 @@ class DataFeed(actorbase.ActorBaseFT):
             p.hdel(self.redis_skey_value, indicator_id)
 
             result = p.execute()[0]
-            LOG.info("Removed in this iteration: " + result)
+            LOG.info("Removed in this iteration: " + str(result))
 
         self.statistics['removed'] += result
 
