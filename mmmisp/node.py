@@ -278,7 +278,7 @@ class Miner(BasePollerFT):
                 LOG.info('Attribute tags: ' + str(attribute_tags))
                 for tag in tags:
                     if tag.startswith('!'):
-                        if tag in attribute_tags:
+                        if tag[1:] in attribute_tags:
                             drop = True
                     else:
                         if tag not in attribute_tags:
