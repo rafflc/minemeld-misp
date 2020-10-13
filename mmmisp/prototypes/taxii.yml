@@ -21,6 +21,7 @@ prototypes:
         class: mmmisp.taxii.DataFeed
         config:
             age_out_interval: 30d
+            max_entries: 10000
             infilters:
                 -   name: accept withdraws
                     conditions:
@@ -44,6 +45,7 @@ prototypes:
         class: mmmisp.taxii.DataFeed
         config:
             age_out_interval: 30d
+            max_entries: 10000
             infilters:
                 -   name: accept withdraws
                     conditions:
@@ -72,6 +74,7 @@ prototypes:
         class: mmmisp.taxii.DataFeed
         config:
             age_out_interval: 30d
+            max_entries: 10000
             infilters:
                 -   name: accept withdraws
                     conditions:
@@ -100,6 +103,7 @@ prototypes:
         class: mmmisp.taxii.DataFeed
         config:
             age_out_interval: 30d
+            max_entries: 10000
             infilters:
                 -   name: accept withdraws
                     conditions:
@@ -128,6 +132,7 @@ prototypes:
         class: mmmisp.taxii.DataFeed
         config:
             age_out_interval: 30d
+            max_entries: 10000
             infilters:
                 -   name: accept withdraws
                     conditions:
