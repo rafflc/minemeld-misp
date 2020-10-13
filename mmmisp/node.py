@@ -192,20 +192,13 @@ class Miner(BasePollerFT):
             filters = self.filters.copy()
             if 'datefrom' in filters:
                 filters['timestamp'] = filters.pop('datefrom')
-                # df = filters.pop('datefrom')
-                #
-                # mo = self.datefrom_re.match(df)
-                # if mo is not None:
-                #     deltad = int(mo.group(1))
-                #     df = datetime.utcfromtimestamp(now / 1000 - 86400 * deltad).strftime('%Y-%m-%d')
-                #
-                # filters['datefrom'] = df
 
             du = filters.pop('dateuntil', None)
             if du is not None:
                 filters['dateuntil'] = du
             if 'event_tags' in filters and filters['event_tags']:
-                filters['tags'] = filters['event_tags'].split(",")
+                filters['tags'] = [x.strip() for x in filters['event_tags'].split(",")]
+
         LOG.info('{} - query filters: {!r}'.format(self.name, filters))
 
         r = misp.get_index(filters)
@@ -281,12 +274,16 @@ class Miner(BasePollerFT):
 
             drop = False
             if 'attribute_tags' in self.filters:
-                tags = self.filters['attribute_tags'].split(";")
+                tags = [x.strip() for x in self.filters['attribute_tags'].split(",")]
                 LOG.info('Attribute tags: ' + str(attribute_tags))
                 for tag in tags:
-                    if tag not in attribute_tags:
-                        LOG.info('Not found: ' + tag)
-                        drop = True
+                    if tag.startswith('!'):
+                        if tag in attribute_tags:
+                            drop = True
+                    else:
+                        if tag not in attribute_tags:
+                            LOG.info('Not found: ' + tag)
+                            drop = True
 
             if drop:
                 continue
