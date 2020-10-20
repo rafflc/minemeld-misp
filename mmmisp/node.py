@@ -1,3 +1,13 @@
+"""
+    Author: Creator of the MISP-extension, Christopher Raffl <christopher.raffl@infoguard.ch>
+    Date: 20.10.2020
+
+    This file consists of the implementation of the Miner class which implements all needed functionality for the
+    MISP-Miner nodes. The most important methods of this class are _build_iterator() (responsible for requesting
+    events and their attributes from MISP via its API) and _process_item() (responsible for processing the answer
+    propagate IoCs according to the configuration).
+"""
+
 import logging
 import os
 import re
@@ -15,6 +25,7 @@ from minemeld.ft.basepoller import BasePollerFT
 
 LOG = logging.getLogger(__name__)
 
+# Mapping of MISP types to Minemeld types
 _MISP_TO_MINEMELD = {
     'url': 'URL',
     'domain': 'domain',
@@ -43,39 +54,6 @@ _MISP_TO_MINEMELD = {
     'regkey|value': 'regkey.value',
 }
 
-"""
-    Types that should be supported:
--- domain                       (1)                 (1)
--- domain|ip                    (1)                 (1)
--- filename                     (1) 	 	 	    (1)
--- filename|md5 	            (1) 	            (1)
--- filename|sha1                (1) 	  	 	    (1)
--- filename|sha256	            (1)	 	 	 	 	(1) 
--- filename|sha512              (1)                 (1)
--- filename|ssdeep              (1)                 (1)
--- hostname                     (1)                 (1)
--- ip-dst                       (1)                 (1)
--- ip-dst|port                  (1)                 (1)
--- ip-src                       (1)                 (1)
--- ip-src|port                  (1)                 (1)
--- md5                          (1)                 (1)
--- mutex 	                    (1)	 	            (1)
--- named pipe                   (1)                 (1)
--- port                         (1)                 (1)
--- sha1	                        (1)	 	  	 	    (1)
--- sha256                       (1)                 (1)
--- sha512                       (1)                 (1)
--- ssdeep                       (1) type other      (1)
--- url                          (1)                 (1)
--- windows-service-displayname  (1)                 (1)
--- windows-service-name	        (1)                 (1)
--- regkey                       (1)                 (1)
--- regkey|value                 (1)                 (1)
--- hostname|port	            (1)                 (1)
-
-"""
-
-
 class Miner(BasePollerFT):
     def __init__(self, name, chassis, config):
         self.automation_key = None
@@ -87,6 +65,12 @@ class Miner(BasePollerFT):
         super(Miner, self).__init__(name, chassis, config)
 
     def configure(self):
+        """
+        Configure the miner according to the specification given in the node description.
+        If certain parameters are not specified, the defaults given as the second argument are used.
+
+        :return: None
+        """
         super(Miner, self).configure()
 
         self.prefix = self.config.get('prefix', 'misp')
@@ -147,6 +131,10 @@ class Miner(BasePollerFT):
         self._load_side_config()
 
     def _load_side_config(self):
+        """
+        Configure the miner according to the specification given by the user via the UI.
+        :return: None
+        """
         try:
             with open(self.side_config_path, 'r') as f:
                 sconfig = yaml.safe_load(f)
@@ -164,6 +152,13 @@ class Miner(BasePollerFT):
             LOG.info('{} - url set'.format(self.name))
 
     def _load_event(self, misp, event):
+        """
+        Given MISP connection and an event index, query API for corresponding event
+
+        :param misp: MISP connection
+        :param event: Index containing uuid of event
+        :return: Answer of the MISP-API containing the requested event
+        """
         euuid = event.get('uuid', None)
         if euuid is None:
             LOG.error('{} - event with no uuid: {!r}'.format(self.name, event))
@@ -172,6 +167,14 @@ class Miner(BasePollerFT):
         return misp.get(event['uuid'])
 
     def _build_iterator(self, now):
+        """
+        Queries specified MISP instance to get events, filter them according to given filters and returns events.
+
+        :param now: unused
+        :return: itarable. Holds the events returned by the API that matched the given filters.
+        """
+
+        # Sanity checks
         if self.automation_key is None:
             raise RuntimeError('{} - MISP Automation Key not set'.format(self.name))
 
@@ -185,10 +188,13 @@ class Miner(BasePollerFT):
         if self.client_cert_required:
             kwargs['cert'] = (self.cert_file, self.key_file)
 
+        # Establish API connection
         misp = PyMISP(self.url, self.automation_key, **kwargs)
 
         filters = None
         if self.filters is not None:
+            # Map self.filters in the way they are given by the configuration to the way they are required in order
+            # to actually filter the events returned by the API.
             filters = self.filters.copy()
             if 'datefrom' in filters:
                 filters['timestamp'] = filters.pop('datefrom')
@@ -201,15 +207,20 @@ class Miner(BasePollerFT):
 
         LOG.info('{} - query filters: {!r}'.format(self.name, filters))
 
+        # Get index from all events via API matching the given filter
         r = misp.get_index(filters)
-
-        LOG.info(r)
 
         events = r['response']
 
         return imap(partial(self._load_event, misp), events)
 
     def _detect_ip_version(self, ip_addr):
+        """
+        Given an IP-address, returns if it is IPv4, IPv6 or invalid
+
+        :param ip_addr: String. Containing IP-adress
+        :return: String. Indicate version if correct IP else, None
+        """
         try:
             parsed = IPNetwork(ip_addr)
         except (AddrFormatError, ValueError):
@@ -225,6 +236,12 @@ class Miner(BasePollerFT):
         return None
 
     def _process_item(self, event):
+        """
+        Processes all attributes of an event matching the filters and returns them in minemeld-format.
+
+        :param event: MISP-event returned by API
+        :return: list containing of attributes (=IoCs)
+        """
         event = event.get('Event', None)
         if event is None:
             return []
@@ -250,6 +267,7 @@ class Miner(BasePollerFT):
             now = int(time.time())
             limit = now - 86400 * int(self.filters['datefrom'][:-1])
 
+        # Iterate over all attributes
         for a in attributes:
             LOG.info('{} - New attribute: {!r}'.format(self.name, a))
             # check if timestamp is older than "datefrom" filter
@@ -258,7 +276,7 @@ class Miner(BasePollerFT):
                 if limit > last_edited:
                     LOG.info("Entry too old - discarded")
                     continue
-            # modified such that tlp is taken from attribute and not from event
+            # Get tlp from attribute and set it as the share level
             tags = a.get('Tag', [])
             attribute_tags = []
             for t in tags:
@@ -273,6 +291,7 @@ class Miner(BasePollerFT):
                     base_value['share_level'] = tname[4:]
 
             drop = False
+            # Check if the attributes tag matches the given filters,
             if 'attribute_tags' in self.filters:
                 tags = [x.strip() for x in self.filters['attribute_tags'].split(",")]
                 LOG.info('Attribute tags: ' + str(attribute_tags))
@@ -285,6 +304,7 @@ class Miner(BasePollerFT):
                             LOG.info('Not found: ' + tag)
                             drop = True
 
+            # If attribute does not match the filter, drop it
             if drop:
                 continue
 
@@ -314,6 +334,7 @@ class Miner(BasePollerFT):
 
             iv.update(base_value)
 
+            # Convert MISP type to minemeld type
             itype = a.get('type', None)
             if itype == 'ip-src':
                 iv['type'] = self._detect_ip_version(indicator)

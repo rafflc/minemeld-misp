@@ -1,3 +1,11 @@
+'''
+    Author: Christopher Raffl <christopher.raffl@infoguard.ch>
+    Date: 20.10.2020
+
+    This file holds the mappings of the webui and prototypes used in the minemeld-misp extension
+    referenced in minemeld.json
+'''
+
 def webui_blueprint():
     from minemeld.flask import aaa
 

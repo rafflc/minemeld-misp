@@ -1,3 +1,19 @@
+/**
+ * @author: Creator of the MISP-extension
+ * @author: Christopher Raffl <christopher.raffl@infoguard.ch>
+ * @date: 20.10.20
+ * @brief This file takes care of loading, storing and editing information and the WebUI for the MISP miner nodes.
+ *
+ * As indicated, the UI consists of the three tabs INFO, STATS and GRAPH. The last two are left as is,
+ * for the first one we made slight modifications.
+ * As indicated, the html is loaded from the file misp.miner.info.html. The extension also implements its own
+ * main controller (MISPSideConfigController) which takes care of providing and storing information about the node
+ * such as the MISP url, automation_key and certificate in the nodes SideConfig.
+ * In order to enable the editing of those value, this file also implements three other controllers
+ * responsible for setting or modifying the MISP URL (MISPURLController), the MISP Automation Key
+ * (MISPAutomationKeyController) and the MISP server cert (MISPUploadClientCertController).
+ */
+
 console.log('Loading mmmisp WebUI');
 
 (function() {

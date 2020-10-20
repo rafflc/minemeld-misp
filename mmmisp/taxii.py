@@ -1,16 +1,13 @@
-#  Copyright 2015-present Palo Alto Networks, Inc
-#
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
+"""
+    Author: PaloAlto Minemeld, Christopher Raffl <christopher.raffl@infoguard.ch>
+    Date: 20.10.2020
+
+    This file consists of the implementation of the DataFeed class which implements all needed functionality for the
+    extended TAXIIserver. The most important methods of this class are _add_indicator() (adds new indicators to
+    the feed), _delete_indicator() (deletes and indicator from the feed), _age_out_run() (checks for age of indicators
+    and deletes them if necessary), filtered_update() (processes updates received from the aggregator node) and
+    filtered_withdraw() (processes withdraws received from the aggregator node).
+"""
 
 from __future__ import absolute_import
 
@@ -70,6 +67,8 @@ import lz4.frame
 from minemeld.ft import basepoller, base, actorbase
 from minemeld.ft.utils import dt_to_millisec, interval_in_sec, utc_millisec
 
+from mmmisp.taxiiserver.stixmapper import *
+
 
 # stix_edh is imported to register the EDH data marking extensions, but it is not directly used.
 # Delete the symbol to silence the warning about the import being unnecessary and prevent the
@@ -83,386 +82,8 @@ def set_id_namespace(uri, name):
     NS = mixbox.namespaces.Namespace(uri, name)
     mixbox.idgen.set_id_namespace(NS)
 
-# IPv4, IPv6
-def _stix_ip_observable(namespace, indicator, value):
-    category = cybox.objects.address_object.Address.CAT_IPV4
-    if value['type'] == 'IPv6':
-        category = cybox.objects.address_object.Address.CAT_IPV6
-
-    indicators = [indicator]
-    if '-' in indicator:
-        # looks like an IP Range, let's try to make it a CIDR
-        a1, a2 = indicator.split('-', 1)
-        if a1 == a2:
-            # same IP
-            indicators = [a1]
-        else:
-            # use netaddr builtin algo to summarize range into CIDR
-            iprange = netaddr.IPRange(a1, a2)
-            cidrs = iprange.cidrs()
-            indicators = map(str, cidrs)
-
-    observables = []
-    for i in indicators:
-        id_ = '{}:observable-{}'.format(
-            namespace,
-            uuid.uuid4()
-        )
-
-        ao = cybox.objects.address_object.Address(
-            address_value=i,
-            category=category
-        )
-
-        o = cybox.core.Observable(
-            title='{}: {}'.format(value['type'], i),
-            id_=id_,
-            item=ao
-        )
-
-        observables.append(o)
-
-    return observables
-
-# email
-def _stix_email_addr_observable(namespace, indicator, value):
-    category = cybox.objects.address_object.Address.CAT_EMAIL
-
-    id_ = '{}:observable-{}'.format(
-        namespace,
-        uuid.uuid4()
-    )
-
-    ao = cybox.objects.address_object.Address(
-        address_value=indicator,
-        category=category
-    )
-
-    o = cybox.core.Observable(
-        title='{}: {}'.format(value['type'], indicator),
-        id_=id_,
-        item=ao
-    )
-
-    return [o]
-
-# domain
-def _stix_domain_observable(namespace, indicator, value):
-    id_ = '{}:observable-{}'.format(
-        namespace,
-        uuid.uuid4()
-    )
-
-    do = cybox.objects.domain_name_object.DomainName()
-    do.value = indicator
-    do.type_ = 'FQDN'
-
-    o = cybox.core.Observable(
-        title='FQDN: ' + indicator,
-        id_=id_,
-        item=do
-    )
-
-    return [o]
-
-# URL
-def _stix_url_observable(namespace, indicator, value):
-    id_ = '{}:observable-{}'.format(
-        namespace,
-        uuid.uuid4()
-    )
-
-    uo = cybox.objects.uri_object.URI(
-        value=indicator,
-        type_=cybox.objects.uri_object.URI.TYPE_URL
-    )
-
-    o = cybox.core.Observable(
-        title='URL: ' + indicator,
-        id_=id_,
-        item=uo
-    )
-
-    return [o]
-
-# md5, sha1, sha256, sha512, ssdeep
-def _stix_hash_observable(namespace, indicator, value):
-    id_ = '{}:observable-{}'.format(
-        namespace,
-        uuid.uuid4()
-    )
-
-    uo = cybox.objects.file_object.File()
-    # add_hash automatically detects type of hash using the length of the given
-    # parameter. Currently ssdeep hashes are not correctly supported by the library
-    uo.add_hash(indicator)
-
-    o = cybox.core.Observable(
-        title='{}: {}'.format(value['type'], indicator),
-        id_=id_,
-        item=uo
-    )
-
-    return [o]
-
-# file.name.md5, file.name.sha1, file.name.sha256, file.name.ssdeep, file.name.sha512
-def _stix_filename_hash_observable(namespace, indicator, value):
-    id_ = '{}:observable-{}'.format(
-        namespace,
-        uuid.uuid4()
-    )
-
-    splitted = indicator.split('|')
-    filename = splitted[0]
-    hash = splitted[1]
-
-    uo = cybox.objects.file_object.File()
-    # add_hash automatically detects type of hash using the length of the given
-    # parameter. Currently ssdeep hashes are not correctly supported by the library
-    uo.add_hash(hash)
-    uo.file_name = filename
-
-    o = cybox.core.Observable(
-        title='{}: {}'.format(value['type'], indicator),
-        id_=id_,
-        item=uo
-    )
-
-    return [o]
-
-# file.name
-
-def _stix_filename_observable(namespace, indicator, value):
-    id_ = '{}:observable-{}'.format(
-        namespace,
-        uuid.uuid4()
-    )
-
-    uo = cybox.objects.file_object.File()
-    uo.file_name = indicator
-
-    o = cybox.core.Observable(
-        title='{}: {}'.format(value['type'], indicator),
-        id_=id_,
-        item=uo
-    )
-
-    return [o]
-
-# mutex
-def _stix_mutex_observable(namespace, indicator, value):
-    id_ = '{}:observable-{}'.format(
-        namespace,
-        uuid.uuid4()
-    )
-
-    mo = cybox.objects.mutex_object.Mutex()
-    mo.name = indicator
-
-    o = cybox.core.Observable(
-        title='{}: {}'.format(value['type'], indicator),
-        id_=id_,
-        item=mo
-    )
-
-    return [o]
-
-# pipe
-def _stix_pipe_observable(namespace, indicator, value):
-    id_ = '{}:observable-{}'.format(
-        namespace,
-        uuid.uuid4()
-    )
-
-    po = cybox.objects.pipe_object.Pipe()
-    po.name = indicator
-
-    o = cybox.core.Observable(
-        title='{}: {}'.format(value['type'], indicator),
-        id_=id_,
-        item=po
-    )
-
-    return [o]
-
-# port
-def _stix_port_observable(namespace, indicator, value):
-    id_ = '{}:observable-{}'.format(
-        namespace,
-        uuid.uuid4()
-    )
-
-    po = cybox.objects.port_object.Port()
-    po.port_value = indicator
-
-    o = cybox.core.Observable(
-        title='{}: {}'.format(value['type'], indicator),
-        id_=id_,
-        item=po
-    )
-
-    return [o]
-
-# windows-service-displayname, windows-service-name
-def _stix_windows_service_observable(namespace, indicator, value):
-    id_ = '{}:observable-{}'.format(
-        namespace,
-        uuid.uuid4()
-    )
-
-    wo = cybox.objects.win_service_object.WinService()
-    if('windows-service-name' in value['type']):
-        wo.service_name = indicator
-    if('windows-service-displayname' in value['type']):
-        wo.display_name = indicator
-
-    o = cybox.core.Observable(
-        title='{}: {}'.format(value['type'], indicator),
-        id_=id_,
-        item=wo
-    )
-
-    return [o]
-
-# regkey, regkey.value
-def _stix_registry_key_observable(namespace, indicator, value):
-    id_ = '{}:observable-{}'.format(
-        namespace,
-        uuid.uuid4()
-    )
-
-    ro = cybox.objects.win_registry_key_object.WinRegistryKey()
-    if('value' in value['type']):
-        elems = indicator.split('|')
-        ro.key = elems[0]
-        vo = cybox.objects.win_registry_key_object.RegistryValue()
-        vo.name = elems[1]
-        ro.values = cybox.objects.win_registry_key_object.RegistryValues()
-        ro.values.value = [vo]
-    else:
-        ro.key = indicator
-
-    o = cybox.core.Observable(
-        title='{}: {}'.format(value['type'], indicator),
-        id_=id_,
-        item=ro
-    )
-
-    return [o]
-
-# hostname
-def _stix_hostname_observable(namespace, indicator, value):
-    id_ = '{}:observable-{}'.format(
-        namespace,
-        uuid.uuid4()
-    )
-
-    ho = cybox.objects.hostname_object.Hostname()
-    ho.hostname_value = indicator
-
-    o = cybox.core.Observable(
-        title='{}: {}'.format(value['type'], indicator),
-        id_=id_,
-        item=ho
-    )
-
-    return [o]
-
-# hostname.port, IPv4.port, IPv6.port
-def _stix_socket_observable(namespace, indicator, value):
-    id_ = '{}:observable-{}'.format(
-        namespace,
-        uuid.uuid4()
-    )
-
-    so = cybox.objects.socket_address_object.SocketAddress()
-    elems = indicator.split('|')
-    if('.port' in value['type']):
-        po = cybox.objects.port_object.Port()
-        po.port_value = elems[1]
-        so.port = po
-    if ('hostname.' in value['type']):
-        ho = cybox.objects.hostname_object.Hostname()
-        ho.hostname_value = elems[0]
-        so.hostname = ho
-    if('IP' in value['type']):
-        category = cybox.objects.address_object.Address.CAT_IPV4
-        if ('IPv6' in value['type']):
-            category = cybox.objects.address_object.Address.CAT_IPV6
-
-        indicators = [elems[0]]
-        if '-' in indicator:
-            # looks like an IP Range, let's try to make it a CIDR
-            a1, a2 = elems[0].split('-', 1)
-            if a1 == a2:
-                # same IP
-                indicators = [a1]
-            else:
-                # use netaddr builtin algo to summarize range into CIDR
-                iprange = netaddr.IPRange(a1, a2)
-                cidrs = iprange.cidrs()
-                indicators = map(str, cidrs)
-
-        ao = cybox.objects.address_object.Address(
-            address_value=indicators[0],
-            category=category
-        )
-
-        so.ip_address = ao
-
-    o = cybox.core.Observable(
-        title='{}: {}'.format(value['type'], indicator),
-        id_=id_,
-        item=so
-    )
-
-    return [o]
-
-# domain.IPv4, domain.IPv6
-def _stix_whois_observable(namespace, indicator, value):
-    id_ = '{}:observable-{}'.format(
-        namespace,
-        uuid.uuid4()
-    )
-
-    elems = indicator.split('|')
-    wo = cybox.objects.whois_object.WhoisEntry()
-    wo.domain_name = cybox.objects.uri_object.URI(
-        value=elems[0]
-    )
-
-    category = cybox.objects.address_object.Address.CAT_IPV4
-    if ('IPv6' in value['type']):
-        category = cybox.objects.address_object.Address.CAT_IPV6
-
-    indicators = [elems[1]]
-    if '-' in indicator:
-        # looks like an IP Range, let's try to make it a CIDR
-        a1, a2 = elems[1].split('-', 1)
-        if a1 == a2:
-            # same IP
-            indicators = [a1]
-        else:
-            # use netaddr builtin algo to summarize range into CIDR
-            iprange = netaddr.IPRange(a1, a2)
-            cidrs = iprange.cidrs()
-            indicators = map(str, cidrs)
-
-    ao = cybox.objects.address_object.Address(
-        address_value=indicators[0],
-        category=category
-    )
-
-    wo.ip_address = ao
-
-    o = cybox.core.Observable(
-        title='{}: {}'.format(value['type'], indicator),
-        id_=id_,
-        item=wo
-    )
-
-    return [o]
-
+# Mapping of functions that create STIX objects of given Minemeld indicator types
+# Implemented in taxiiserver.stixmapper.py
 _TYPE_MAPPING = {
     'IPv4': {
         'indicator_type': stix.common.vocabs.IndicatorType.TERM_IP_WATCHLIST,
@@ -595,6 +216,12 @@ class DataFeed(actorbase.ActorBaseFT):
         super(DataFeed, self).__init__(name, chassis, config)
 
     def configure(self):
+        """
+        Configure the feed according to the specification given in the node description.
+        If certain parameters are not specified, the defaults given as the second argument are used.
+
+        :return: None
+        """
         super(DataFeed, self).configure()
 
         self.redis_url = self.config.get('redis_url',
@@ -660,6 +287,11 @@ class DataFeed(actorbase.ActorBaseFT):
         )
 
     def _read_oldest_indicator(self):
+        """
+        Return indicator with oldest timestamp
+
+        :return: timestamp, inidactor_id
+        """
         olist = self.SR.zrange(
             self.redis_skey, 0, 0,
             withscores=True
@@ -684,6 +316,17 @@ class DataFeed(actorbase.ActorBaseFT):
         self.SR.delete(self.redis_skey_value)
 
     def _add_indicator(self, score, indicator, value):
+        """
+        Processes indicator and adds it in STIX format to the TAXII output feed.
+
+        If indicator is already present, removes it. Thus we can easily adapt new indicators and avoid
+        duplication.
+
+        :param score: int, rating of indicator (not really used)
+        :param indicator: str, actual indicator
+        :param value: dict, indicator object holding additional information
+        :return: None
+        """
 
         if value['type'] == 'URL':
             ind_value = werkzeug.urls.iri_to_uri(indicator, safe_conversion=True)
@@ -840,6 +483,12 @@ class DataFeed(actorbase.ActorBaseFT):
         self.statistics['added'] += result
 
     def _delete_indicator(self, indicator_id):
+        """
+        Removes given indicator from TAXII feed.
+
+        :param indicator_id: str, actual value of indicator
+        :return: None
+        """
         with self.SR.pipeline() as p:
             p.multi()
 
@@ -852,6 +501,11 @@ class DataFeed(actorbase.ActorBaseFT):
         self.statistics['removed'] += result
 
     def _age_out_run(self):
+        """
+        Checks for indicators that are too old and triggers their removal.
+
+        :return: None
+        """
         while True:
             now = utc_millisec()
             low_watermark = now - self.age_out_interval*1000
@@ -880,12 +534,27 @@ class DataFeed(actorbase.ActorBaseFT):
 
     @base._counting('update.processed')
     def filtered_update(self, source=None, indicator=None, value=None):
+        """
+        Processes updates, i.e. triggers addition of new indicators.
+
+        :param source: ignored
+        :param indicator: str, actual indicator
+        :param value: dict, indicator object holding additional information
+        :return: None
+        """
         now = utc_millisec()
 
         self._add_indicator(now, indicator, value)
 
     @base._counting('withdraw.processed')
     def filtered_withdraw(self, source=None, indicator=None, value=None):
+        """
+        Processes withdrawals, i.e. triggers removal of these indicators.
+        :param source: ignored
+        :param indicator: str, actual indicator
+        :param value: dict, indicator object holding additional information
+        :return: None
+        """
         LOG.info(
             self.name + "  - deleting indicator: " + indicator + ": " + str(value)
         )
