@@ -1,3 +1,13 @@
+"""
+    Author: PaloAlto Minemeld, Christopher Raffl <christopher.raffl@infoguard.ch>
+    Date: 20.10.2020
+
+    This file consists of two things. Firs, a class StixMapper that maps types as they are used in Minemeld to
+    stix-types. Second, for each mapping there exists a method that takes care of creating a stix/cybox object
+    in such a form that it can be added to the TAXII datafeeed.
+
+"""
+
 from __future__ import absolute_import
 
 import logging
@@ -56,7 +66,8 @@ import lz4.frame
 
 class StixMapper():
     def __init__(self):
-        # Mapping of functions that create STIX objects of given Minemeld indicator types
+        # Mapping of minemeld IoC types to stix indicator types and methods that create STIX/cybox objects for
+        # the given Minemeld type.
         self._TYPE_MAPPING = {
             'IPv4': {
                 'indicator_type': stix.common.vocabs.IndicatorType.TERM_IP_WATCHLIST,
@@ -340,8 +351,7 @@ def _stix_filename_hash_observable(namespace, indicator, value):
     return [o]
 
 
-# file.name
-
+# file.nameq
 def _stix_filename_observable(namespace, indicator, value):
     id_ = '{}:observable-{}'.format(
         namespace,

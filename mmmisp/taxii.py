@@ -108,10 +108,10 @@ class DataFeed(actorbase.ActorBaseFT):
             os.environ.get('REDIS_URL', 'unix:///var/run/redis/redis.sock')
         )
 
-        self.namespace = self.config.get('namespace', 'minemeld')
+        self.namespace = self.config.get('namespace', 'issuer')
         self.namespaceuri = self.config.get(
             'namespaceuri',
-            'https://go.paloaltonetworks.com/minemeld'
+            'https://infoguard.ch'
         )
 
         self.age_out_interval = self.config.get('age_out_interval', '24h')
@@ -213,17 +213,18 @@ class DataFeed(actorbase.ActorBaseFT):
         else:
             ind_value = indicator
 
+        # If indicator already exists, it gets deleted
+        # By doing so, we avoid duplicates and also simplify tracking modifications.
         LOG.info("Deleting indicator " + ind_value)
-
         self._delete_indicator(ind_value)
 
-        LOG.info("Adding same indicator again")
-
+        # Check if max_entries already reached. If yes, drop indicator
         if self.length() >= self.max_entries:
             LOG.info('dropped overflow')
             self.statistics['drop.overflow'] += 1
             return
 
+        # Check if mapping for this minemeld-IoC-type exists
         if not self.stixMapper.type_exists(value['type']):
             self.statistics['drop.unknown_type'] += 1
             LOG.error('%s - Unsupported indicator type: %s', self.name, value['type'])
@@ -231,6 +232,7 @@ class DataFeed(actorbase.ActorBaseFT):
 
         set_id_namespace(self.namespaceuri, self.namespace)
 
+        # Add MetaData to IoC
         title = None
         if len(self.attributes_package_title) != 0:
             for pt in self.attributes_package_title:
@@ -298,14 +300,18 @@ class DataFeed(actorbase.ActorBaseFT):
                 information_source=information_source
             )
 
+        # create package
         spid = '{}:indicator-{}'.format(
             self.namespace,
             uuid.uuid4()
         )
         sp = stix.core.STIXPackage(id_=spid, stix_header=header)
 
+        # Create stix indicators.
         observables = self.stixMapper.observables(self.namespace, indicator, value)
 
+        # Iterate over created indicators, process and enrich them and add them to the package.
+        # Note that the only case for which we obtain more than one is for indicators that masked an IP range.
         for o in observables:
             id_ = '{}:indicator-{}'.format(
                 self.namespace,
@@ -346,10 +352,14 @@ class DataFeed(actorbase.ActorBaseFT):
 
             sp.add_indicator(sindicator)
 
+        # convert indicator to JSON and compress it
         spackage = 'lz4' + lz4.frame.compress(
             sp.to_json(),
             compression_level=lz4.frame.COMPRESSIONLEVEL_MINHC
         )
+
+        # Adding edited indicator to storage
+        LOG.info("Adding indicator again")
         with self.SR.pipeline() as p:
             p.multi()
 
