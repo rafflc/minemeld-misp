@@ -67,7 +67,7 @@ import lz4.frame
 from minemeld.ft import basepoller, base, actorbase
 from minemeld.ft.utils import dt_to_millisec, interval_in_sec, utc_millisec
 
-from mmmisp.taxiiserver.stixmapper import *
+from mmmisp.taxiiserver.stixmapper import StixMapper
 
 
 # stix_edh is imported to register the EDH data marking extensions, but it is not directly used.
@@ -82,127 +82,6 @@ def set_id_namespace(uri, name):
     NS = mixbox.namespaces.Namespace(uri, name)
     mixbox.idgen.set_id_namespace(NS)
 
-# Mapping of functions that create STIX objects of given Minemeld indicator types
-# Implemented in taxiiserver.stixmapper.py
-_TYPE_MAPPING = {
-    'IPv4': {
-        'indicator_type': stix.common.vocabs.IndicatorType.TERM_IP_WATCHLIST,
-        'mapper': _stix_ip_observable
-    },
-    'IPv6': {
-        'indicator_type': stix.common.vocabs.IndicatorType.TERM_IP_WATCHLIST,
-        'mapper': _stix_ip_observable
-    },
-    'URL': {
-        'indicator_type': stix.common.vocabs.IndicatorType.TERM_URL_WATCHLIST,
-        'mapper': _stix_url_observable
-    },
-    'domain': {
-        'indicator_type': stix.common.vocabs.IndicatorType.TERM_DOMAIN_WATCHLIST,
-        'mapper': _stix_domain_observable
-    },
-    'sha256': {
-        'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
-        'mapper': _stix_hash_observable
-    },
-    'sha512': {
-        'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
-        'mapper': _stix_hash_observable
-    },
-    'sha1': {
-        'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
-        'mapper': _stix_hash_observable
-    },
-    'md5': {
-        'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
-        'mapper': _stix_hash_observable
-    },
-    'ssdeep': {
-        'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
-        'mapper': _stix_hash_observable
-    },
-    'email': {
-        'indicator_type': stix.common.vocabs.IndicatorType.TERM_MALICIOUS_EMAIL,
-        'mapper': _stix_email_addr_observable
-    },
-    'file.name': {
-        'indicator_type': stix.common.vocabs.IndicatorType.TERM_MALWARE_ARTIFACTS,
-        'mapper': _stix_filename_observable
-    },
-    'file.name.md5': {
-        'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
-        'mapper': _stix_filename_hash_observable
-    },
-    'file.name.sha1': {
-        'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
-        'mapper': _stix_filename_hash_observable
-    },
-    'file.name.sha256': {
-        'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
-        'mapper': _stix_filename_hash_observable
-    },
-    'file.name.sha512': {
-        'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
-        'mapper': _stix_filename_hash_observable
-    },
-    'file.name.ssdeep': {
-        'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
-        'mapper': _stix_filename_hash_observable
-    },
-    'mutex': {
-        'indicator_type': stix.common.vocabs.IndicatorType.TERM_MALWARE_ARTIFACTS,
-        'mapper': _stix_mutex_observable
-    },
-    'pipe': {
-        'indicator_type': stix.common.vocabs.IndicatorType.TERM_MALWARE_ARTIFACTS,
-        'mapper':  _stix_pipe_observable
-    },
-    'port': {
-        'indicator_type': stix.common.vocabs.IndicatorType.TERM_HOST_CHARACTERISTICS,
-        'mapper': _stix_port_observable
-    },
-    'windows-service-displayname': {
-        'indicator_type': stix.common.vocabs.IndicatorType.TERM_MALWARE_ARTIFACTS,
-        'mapper': _stix_windows_service_observable
-    },
-    'windows-service-name': {
-        'indicator_type': stix.common.vocabs.IndicatorType.TERM_MALWARE_ARTIFACTS,
-        'mapper': _stix_windows_service_observable
-    },
-    'regkey': {
-        'indicator_type': stix.common.vocabs.IndicatorType.TERM_MALWARE_ARTIFACTS,
-        'mapper': _stix_registry_key_observable
-    },
-    'regkey.value': {
-        'indicator_type': stix.common.vocabs.IndicatorType.TERM_MALWARE_ARTIFACTS,
-        'mapper': _stix_registry_key_observable
-    },
-    'hostname.port': {
-        'indicator_type': stix.common.vocabs.IndicatorType.TERM_HOST_CHARACTERISTICS,
-        'mapper': _stix_socket_observable
-    },
-    'IPv4.port': {
-        'indicator_type': stix.common.vocabs.IndicatorType.TERM_HOST_CHARACTERISTICS,
-        'mapper': _stix_socket_observable
-    },
-    'IPv6.port': {
-        'indicator_type': stix.common.vocabs.IndicatorType.TERM_HOST_CHARACTERISTICS,
-        'mapper': _stix_socket_observable
-    },
-    'hostname': {
-        'indicator_type': stix.common.vocabs.IndicatorType.TERM_DOMAIN_WATCHLIST,
-        'mapper': _stix_hostname_observable
-    },
-    'domain.IPv4': {
-        'indicator_type': stix.common.vocabs.IndicatorType.TERM_IP_WATCHLIST,
-        'mapper': _stix_whois_observable
-    },
-    'domain.IPv6': {
-        'indicator_type': stix.common.vocabs.IndicatorType.TERM_IP_WATCHLIST,
-        'mapper': _stix_whois_observable
-    }
-}
-
 
 class DataFeed(actorbase.ActorBaseFT):
     def __init__(self, name, chassis, config):
@@ -212,6 +91,7 @@ class DataFeed(actorbase.ActorBaseFT):
 
         self.SR = None
         self.ageout_glet = None
+        self.stixMapper = StixMapper()
 
         super(DataFeed, self).__init__(name, chassis, config)
 
@@ -344,11 +224,9 @@ class DataFeed(actorbase.ActorBaseFT):
             self.statistics['drop.overflow'] += 1
             return
 
-        type_ = value['type']
-        type_mapper = _TYPE_MAPPING.get(type_, None)
-        if type_mapper is None:
+        if not self.stixMapper.type_exists(value['type']):
             self.statistics['drop.unknown_type'] += 1
-            LOG.error('%s - Unsupported indicator type: %s', self.name, type_)
+            LOG.error('%s - Unsupported indicator type: %s', self.name, value['type'])
             return
 
         set_id_namespace(self.namespaceuri, self.namespace)
@@ -426,7 +304,7 @@ class DataFeed(actorbase.ActorBaseFT):
         )
         sp = stix.core.STIXPackage(id_=spid, stix_header=header)
 
-        observables = type_mapper['mapper'](self.namespace, indicator, value)
+        observables = self.stixMapper.observables(self.namespace, indicator, value)
 
         for o in observables:
             id_ = '{}:indicator-{}'.format(
@@ -462,7 +340,7 @@ class DataFeed(actorbase.ActorBaseFT):
             else:
                 sindicator.confidence = "High"
 
-            sindicator.add_indicator_type(type_mapper['indicator_type'])
+            sindicator.add_indicator_type(self.stixMapper(value))
 
             sindicator.add_observable(o)
 

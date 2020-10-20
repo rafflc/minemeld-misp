@@ -1,4 +1,3 @@
-
 from __future__ import absolute_import
 
 import logging
@@ -54,6 +53,140 @@ import mixbox.namespaces
 
 import lz4.frame
 
+
+class StixMapper():
+    def __init__(self):
+        # Mapping of functions that create STIX objects of given Minemeld indicator types
+        self._TYPE_MAPPING = {
+            'IPv4': {
+                'indicator_type': stix.common.vocabs.IndicatorType.TERM_IP_WATCHLIST,
+                'mapper': _stix_ip_observable
+            },
+            'IPv6': {
+                'indicator_type': stix.common.vocabs.IndicatorType.TERM_IP_WATCHLIST,
+                'mapper': _stix_ip_observable
+            },
+            'URL': {
+                'indicator_type': stix.common.vocabs.IndicatorType.TERM_URL_WATCHLIST,
+                'mapper': _stix_url_observable
+            },
+            'domain': {
+                'indicator_type': stix.common.vocabs.IndicatorType.TERM_DOMAIN_WATCHLIST,
+                'mapper': _stix_domain_observable
+            },
+            'sha256': {
+                'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
+                'mapper': _stix_hash_observable
+            },
+            'sha512': {
+                'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
+                'mapper': _stix_hash_observable
+            },
+            'sha1': {
+                'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
+                'mapper': _stix_hash_observable
+            },
+            'md5': {
+                'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
+                'mapper': _stix_hash_observable
+            },
+            'ssdeep': {
+                'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
+                'mapper': _stix_hash_observable
+            },
+            'email': {
+                'indicator_type': stix.common.vocabs.IndicatorType.TERM_MALICIOUS_EMAIL,
+                'mapper': _stix_email_addr_observable
+            },
+            'file.name': {
+                'indicator_type': stix.common.vocabs.IndicatorType.TERM_MALWARE_ARTIFACTS,
+                'mapper': _stix_filename_observable
+            },
+            'file.name.md5': {
+                'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
+                'mapper': _stix_filename_hash_observable
+            },
+            'file.name.sha1': {
+                'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
+                'mapper': _stix_filename_hash_observable
+            },
+            'file.name.sha256': {
+                'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
+                'mapper': _stix_filename_hash_observable
+            },
+            'file.name.sha512': {
+                'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
+                'mapper': _stix_filename_hash_observable
+            },
+            'file.name.ssdeep': {
+                'indicator_type': stix.common.vocabs.IndicatorType.TERM_FILE_HASH_WATCHLIST,
+                'mapper': _stix_filename_hash_observable
+            },
+            'mutex': {
+                'indicator_type': stix.common.vocabs.IndicatorType.TERM_MALWARE_ARTIFACTS,
+                'mapper': _stix_mutex_observable
+            },
+            'pipe': {
+                'indicator_type': stix.common.vocabs.IndicatorType.TERM_MALWARE_ARTIFACTS,
+                'mapper': _stix_pipe_observable
+            },
+            'port': {
+                'indicator_type': stix.common.vocabs.IndicatorType.TERM_HOST_CHARACTERISTICS,
+                'mapper': _stix_port_observable
+            },
+            'windows-service-displayname': {
+                'indicator_type': stix.common.vocabs.IndicatorType.TERM_MALWARE_ARTIFACTS,
+                'mapper': _stix_windows_service_observable
+            },
+            'windows-service-name': {
+                'indicator_type': stix.common.vocabs.IndicatorType.TERM_MALWARE_ARTIFACTS,
+                'mapper': _stix_windows_service_observable
+            },
+            'regkey': {
+                'indicator_type': stix.common.vocabs.IndicatorType.TERM_MALWARE_ARTIFACTS,
+                'mapper': _stix_registry_key_observable
+            },
+            'regkey.value': {
+                'indicator_type': stix.common.vocabs.IndicatorType.TERM_MALWARE_ARTIFACTS,
+                'mapper': _stix_registry_key_observable
+            },
+            'hostname.port': {
+                'indicator_type': stix.common.vocabs.IndicatorType.TERM_HOST_CHARACTERISTICS,
+                'mapper': _stix_socket_observable
+            },
+            'IPv4.port': {
+                'indicator_type': stix.common.vocabs.IndicatorType.TERM_HOST_CHARACTERISTICS,
+                'mapper': _stix_socket_observable
+            },
+            'IPv6.port': {
+                'indicator_type': stix.common.vocabs.IndicatorType.TERM_HOST_CHARACTERISTICS,
+                'mapper': _stix_socket_observable
+            },
+            'hostname': {
+                'indicator_type': stix.common.vocabs.IndicatorType.TERM_DOMAIN_WATCHLIST,
+                'mapper': _stix_hostname_observable
+            },
+            'domain.IPv4': {
+                'indicator_type': stix.common.vocabs.IndicatorType.TERM_IP_WATCHLIST,
+                'mapper': _stix_whois_observable
+            },
+            'domain.IPv6': {
+                'indicator_type': stix.common.vocabs.IndicatorType.TERM_IP_WATCHLIST,
+                'mapper': _stix_whois_observable
+            }
+        }
+
+    def type_exists(self, type):
+        return self._TYPE_MAPPING.get(type, None) is not None
+
+    def observables(self, namespace, indicator, value):
+        type = self._TYPE_MAPPING.get(value['type'])
+        return type['mapper'](namespace, indicator, value)
+
+    def indicator_type(self, value):
+        return self._TYPE_MAPPING.get(value['type'])['indicator_type']
+
+
 # IPv4, IPv6
 def _stix_ip_observable(namespace, indicator, value):
     category = cybox.objects.address_object.Address.CAT_IPV4
@@ -95,6 +228,7 @@ def _stix_ip_observable(namespace, indicator, value):
 
     return observables
 
+
 # email
 def _stix_email_addr_observable(namespace, indicator, value):
     category = cybox.objects.address_object.Address.CAT_EMAIL
@@ -117,6 +251,7 @@ def _stix_email_addr_observable(namespace, indicator, value):
 
     return [o]
 
+
 # domain
 def _stix_domain_observable(namespace, indicator, value):
     id_ = '{}:observable-{}'.format(
@@ -135,6 +270,7 @@ def _stix_domain_observable(namespace, indicator, value):
     )
 
     return [o]
+
 
 # URL
 def _stix_url_observable(namespace, indicator, value):
@@ -156,6 +292,7 @@ def _stix_url_observable(namespace, indicator, value):
 
     return [o]
 
+
 # md5, sha1, sha256, sha512, ssdeep
 def _stix_hash_observable(namespace, indicator, value):
     id_ = '{}:observable-{}'.format(
@@ -175,6 +312,7 @@ def _stix_hash_observable(namespace, indicator, value):
     )
 
     return [o]
+
 
 # file.name.md5, file.name.sha1, file.name.sha256, file.name.ssdeep, file.name.sha512
 def _stix_filename_hash_observable(namespace, indicator, value):
@@ -201,6 +339,7 @@ def _stix_filename_hash_observable(namespace, indicator, value):
 
     return [o]
 
+
 # file.name
 
 def _stix_filename_observable(namespace, indicator, value):
@@ -220,6 +359,7 @@ def _stix_filename_observable(namespace, indicator, value):
 
     return [o]
 
+
 # mutex
 def _stix_mutex_observable(namespace, indicator, value):
     id_ = '{}:observable-{}'.format(
@@ -237,6 +377,7 @@ def _stix_mutex_observable(namespace, indicator, value):
     )
 
     return [o]
+
 
 # pipe
 def _stix_pipe_observable(namespace, indicator, value):
@@ -256,6 +397,7 @@ def _stix_pipe_observable(namespace, indicator, value):
 
     return [o]
 
+
 # port
 def _stix_port_observable(namespace, indicator, value):
     id_ = '{}:observable-{}'.format(
@@ -274,6 +416,7 @@ def _stix_port_observable(namespace, indicator, value):
 
     return [o]
 
+
 # windows-service-displayname, windows-service-name
 def _stix_windows_service_observable(namespace, indicator, value):
     id_ = '{}:observable-{}'.format(
@@ -282,9 +425,9 @@ def _stix_windows_service_observable(namespace, indicator, value):
     )
 
     wo = cybox.objects.win_service_object.WinService()
-    if('windows-service-name' in value['type']):
+    if ('windows-service-name' in value['type']):
         wo.service_name = indicator
-    if('windows-service-displayname' in value['type']):
+    if ('windows-service-displayname' in value['type']):
         wo.display_name = indicator
 
     o = cybox.core.Observable(
@@ -295,6 +438,7 @@ def _stix_windows_service_observable(namespace, indicator, value):
 
     return [o]
 
+
 # regkey, regkey.value
 def _stix_registry_key_observable(namespace, indicator, value):
     id_ = '{}:observable-{}'.format(
@@ -303,7 +447,7 @@ def _stix_registry_key_observable(namespace, indicator, value):
     )
 
     ro = cybox.objects.win_registry_key_object.WinRegistryKey()
-    if('value' in value['type']):
+    if 'value' in value['type']:
         elems = indicator.split('|')
         ro.key = elems[0]
         vo = cybox.objects.win_registry_key_object.RegistryValue()
@@ -320,6 +464,7 @@ def _stix_registry_key_observable(namespace, indicator, value):
     )
 
     return [o]
+
 
 # hostname
 def _stix_hostname_observable(namespace, indicator, value):
@@ -339,6 +484,7 @@ def _stix_hostname_observable(namespace, indicator, value):
 
     return [o]
 
+
 # hostname.port, IPv4.port, IPv6.port
 def _stix_socket_observable(namespace, indicator, value):
     id_ = '{}:observable-{}'.format(
@@ -348,7 +494,7 @@ def _stix_socket_observable(namespace, indicator, value):
 
     so = cybox.objects.socket_address_object.SocketAddress()
     elems = indicator.split('|')
-    if('.port' in value['type']):
+    if ('.port' in value['type']):
         po = cybox.objects.port_object.Port()
         po.port_value = elems[1]
         so.port = po
@@ -356,7 +502,7 @@ def _stix_socket_observable(namespace, indicator, value):
         ho = cybox.objects.hostname_object.Hostname()
         ho.hostname_value = elems[0]
         so.hostname = ho
-    if('IP' in value['type']):
+    if ('IP' in value['type']):
         category = cybox.objects.address_object.Address.CAT_IPV4
         if ('IPv6' in value['type']):
             category = cybox.objects.address_object.Address.CAT_IPV6
@@ -388,6 +534,7 @@ def _stix_socket_observable(namespace, indicator, value):
     )
 
     return [o]
+
 
 # domain.IPv4, domain.IPv6
 def _stix_whois_observable(namespace, indicator, value):
