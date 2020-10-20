@@ -11,7 +11,7 @@ prototypes:
   tlpWhiteAttributes:
     author: InfoGuard AG
     class: mmmisp.Miner
-    development_status: EXPERIMENTAL
+    development_status: STABLE
     node_type: miner
     indicator_types:
       - any
@@ -50,7 +50,7 @@ prototypes:
   tlpGreenAttributes:
     author: InfoGuard AG
     class: mmmisp.Miner
-    development_status: EXPERIMENTAL
+    development_status: STABLE
     node_type: miner
     indicator_types:
       - any
@@ -89,7 +89,7 @@ prototypes:
   tlpAmberAttributes:
     author: InfoGuard AG
     class: mmmisp.Miner
-    development_status: EXPERIMENTAL
+    development_status: STABLE
     node_type: miner
     indicator_types:
       - any
@@ -128,7 +128,7 @@ prototypes:
   tlpRedAttributes:
     author: InfoGuard AG
     class: mmmisp.Miner
-    development_status: EXPERIMENTAL
+    development_status: STABLE
     node_type: miner
     indicator_types:
       - any
@@ -167,7 +167,7 @@ prototypes:
   allAttributes:
     author: InfoGuard AG
     class: mmmisp.Miner
-    development_status: EXPERIMENTAL
+    development_status: STABLE
     node_type: miner
     indicator_types:
       - any
@@ -202,7 +202,7 @@ prototypes:
   HOTtlpRedAttributes:
     author: InfoGuard AG
     class: mmmisp.Miner
-    development_status: EXPERIMENTAL
+    development_status: STABLE
     node_type: miner
     indicator_types:
       - any

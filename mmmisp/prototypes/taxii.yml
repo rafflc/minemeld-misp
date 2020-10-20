@@ -10,7 +10,7 @@ prototypes:
 
     extendedTaxiiDataFeed:
         author: InfoGuard AG
-        development_status: EXPERIMENTAL
+        development_status: STABLE
         node_type: output
         indicator_types:
           - any
@@ -34,7 +34,7 @@ prototypes:
 
     whiteTaxiiDataFeed:
         author: InfoGuard AG
-        development_status: EXPERIMENTAL
+        development_status: STABLE
         node_type: output
         indicator_types:
             - any
@@ -63,7 +63,7 @@ prototypes:
 
     greenTaxiiDataFeed:
         author: InfoGuard AG
-        development_status: EXPERIMENTAL
+        development_status: STABLE
         node_type: output
         indicator_types:
             - any
@@ -92,7 +92,7 @@ prototypes:
 
     amberTaxiiDataFeed:
         author: InfoGuard AG
-        development_status: EXPERIMENTAL
+        development_status: STABLE
         node_type: output
         indicator_types:
             - any
@@ -121,7 +121,7 @@ prototypes:
 
     redTaxiiDataFeed:
         author: InfoGuard AG
-        development_status: EXPERIMENTAL
+        development_status: STABLE
         node_type: output
         indicator_types:
             - any

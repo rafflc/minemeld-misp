@@ -1,0 +1,133 @@
+url:
+description: >
+  Aggregator nodes for MineMeld. If used together with the MISP miner node, it supports the following MISP-types:
+
+  URL, domain, domain.ip, hostname, hostname.port, md5, sha1, sha256, sha512, ssdeep, mutex, filename,
+  filename|md5, filename|sha1, filename|sha256, filename|sha512, filename|ssdeep, email-src, email-dst,
+  named pipe, port, windows-service-displayname, windwos-service-name, regkey, regkey|value
+
+prototypes:
+
+    aggregatorRed:
+        author: InfoGuard AG
+        development_status: STABLE
+        node_type: processor
+        class: minemeld.ft.op.AggregateFT
+        indicator_types:
+          - any
+        tags:
+          - red
+        description: >
+            Aggregator for all indicators with share_level red
+            Inputs with names starting with "wl" will be interpreted as
+            whitelists.
+        config:
+            whitelist_prefixes:
+                - wl
+            infilters:
+                - name: accept withdraws
+                  conditions:
+                    - __method == 'withdraw'
+                  actions:
+                    - accept
+                - name: accept red
+                  conditions:
+                    - share_level == 'red'
+                  actions:
+                    - accept
+                - name: drop all
+                  actions:
+                    - drop
+
+    aggregatorAmber:
+        author: InfoGuard AG
+        development_status: STABLE
+        node_type: processor
+        class: minemeld.ft.op.AggregateFT
+        indicator_types:
+            - any
+        tags:
+            - amber
+        description: >
+            Aggregator for all indicators with share_level amber
+            Inputs with names starting with "wl" will be interpreted as
+            whitelists.
+        config:
+            whitelist_prefixes:
+                - wl
+            infilters:
+                -   name: accept withdraws
+                    conditions:
+                        - __method == 'withdraw'
+                    actions:
+                        - accept
+                -   name: accept amber
+                    conditions:
+                        - share_level == 'amber'
+                    actions:
+                        - accept
+                -   name: drop all
+                    actions:
+                        - drop
+
+    aggregatorGreen:
+        author: InfoGuard AG
+        development_status: STABLE
+        node_type: processor
+        class: minemeld.ft.op.AggregateFT
+        indicator_types:
+            - any
+        tags:
+            - green
+        description: >
+            Aggregator for all indicators with share_level green
+            Inputs with names starting with "wl" will be interpreted as
+            whitelists.
+        config:
+            whitelist_prefixes:
+                - wl
+            infilters:
+                -   name: accept withdraws
+                    conditions:
+                        - __method == 'withdraw'
+                    actions:
+                        - accept
+                -   name: accept green
+                    conditions:
+                        - share_level == 'green'
+                    actions:
+                        - accept
+                -   name: drop all
+                    actions:
+                        - drop
+
+    aggregatorWhite:
+        author: InfoGuard AG
+        development_status: STABLE
+        node_type: processor
+        class: minemeld.ft.op.AggregateFT
+        indicator_types:
+            - any
+        tags:
+            - white
+        description: >
+            Aggregator for all indicators with share_level white
+            Inputs with names starting with "wl" will be interpreted as
+            whitelists.
+        config:
+            whitelist_prefixes:
+                - wl
+            infilters:
+                -   name: accept withdraws
+                    conditions:
+                        - __method == 'withdraw'
+                    actions:
+                        - accept
+                -   name: accept white
+                    conditions:
+                        - share_level == 'white'
+                    actions:
+                        - accept
+                -   name: drop all
+                    actions:
+                        - drop
