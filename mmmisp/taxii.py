@@ -346,7 +346,7 @@ class DataFeed(actorbase.ActorBaseFT):
             else:
                 sindicator.confidence = "High"
 
-            sindicator.add_indicator_type(self.stixMapper(value))
+            sindicator.add_indicator_type(self.stixMapper.indicator_type(value))
 
             sindicator.add_observable(o)
 
