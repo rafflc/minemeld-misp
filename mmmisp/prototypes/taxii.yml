@@ -15,8 +15,11 @@ prototypes:
         indicator_types:
           - any
         tags:
-          - extension
           - TAXII
+          - red
+          - amber
+          - green
+          - white
         description: TAXII DataFeed for all share levels
         class: mmmisp.taxii.DataFeed
         config:
@@ -61,6 +64,41 @@ prototypes:
                     actions:
                         - drop
 
+    green+TaxiiDataFeed:
+        author: InfoGuard AG
+        development_status: STABLE
+        node_type: output
+        indicator_types:
+            - any
+        tags:
+            - TAXII
+            - green
+            - white
+        description: TAXII DataFeed for IoCs with share level green and white
+        class: mmmisp.taxii.DataFeed
+        config:
+            age_out_interval: 100d
+            max_entries: 10000
+            infilters:
+                -   name: accept withdraws
+                    conditions:
+                        - __method == 'withdraw'
+                    actions:
+                        - accept
+                -   name: accept share level green
+                    conditions:
+                        - share_level == 'green'
+                    actions:
+                        - accept
+                -   name: accept share level white
+                    conditions:
+                        - share_level == 'white'
+                    actions:
+                        - accept
+                -   name: drop rest
+                    actions:
+                        - drop
+
     greenTaxiiDataFeed:
         author: InfoGuard AG
         development_status: STABLE
@@ -84,6 +122,47 @@ prototypes:
                 -   name: accept share level green
                     conditions:
                         - share_level == 'green'
+                    actions:
+                        - accept
+                -   name: drop rest
+                    actions:
+                        - drop
+
+    amber+TaxiiDataFeed:
+        author: InfoGuard AG
+        development_status: STABLE
+        node_type: output
+        indicator_types:
+            - any
+        tags:
+            - TAXII
+            - amber
+            - green
+            - white
+        description: TAXII DataFeed for IoCs with share level amber, green and white
+        class: mmmisp.taxii.DataFeed
+        config:
+            age_out_interval: 100d
+            max_entries: 10000
+            infilters:
+                -   name: accept withdraws
+                    conditions:
+                        - __method == 'withdraw'
+                    actions:
+                        - accept
+                -   name: accept share level amber
+                    conditions:
+                        - share_level == 'amber'
+                    actions:
+                        - accept
+                -   name: accept share level green
+                    conditions:
+                        - share_level == 'green'
+                    actions:
+                        - accept
+                -   name: accept share level white
+                    conditions:
+                        - share_level == 'white'
                     actions:
                         - accept
                 -   name: drop rest
