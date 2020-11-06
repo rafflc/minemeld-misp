@@ -31,7 +31,7 @@ prototypes:
         # separate multiple tags with ',' and exclude tags by prepending '!'
         attribute_tags: 'tlp:white'
         # Fetches all events not older than 20 days.
-        datefrom: 20d
+        datefrom: 100d
         # Fetches only published events
         published: 'true'
       # Fetches indicator of all types.
@@ -70,7 +70,7 @@ prototypes:
         # separate multiple tags with ',' and exclude tags by prepending '!'
         attribute_tags: 'tlp:green'
         # Fetches all events not older than 20 days.
-        datefrom: 20d
+        datefrom: 100d
         # Fetches only published events
         published: 'true'
       # Fetches indicator of all types.
@@ -109,7 +109,7 @@ prototypes:
         # separate multiple tags with ',' and exclude tags by prepending '!'
         attribute_tags: 'tlp:amber'
         # Fetches all events not older than 20 days.
-        datefrom: 20d
+        datefrom: 100d
         # Fetches only published events
         published: 'true'
       # Fetches indicator of all types.
@@ -148,7 +148,7 @@ prototypes:
         # separate multiple tags with ',' and exclude tags by prepending '!'
         attribute_tags: 'tlp:red'
         # Fetches all events not older than 20 days.
-        datefrom: 20d
+        datefrom: 100d
         # Fetches only published events
         published: 'true'
       # Fetches indicator of all types.
@@ -183,7 +183,7 @@ prototypes:
       source_name: InfoGuard.misp.any
       filters:
         # Fetches all events not older than 20 days.
-        datefrom: 20d
+        datefrom: 100d
         # Fetches only published events
         published: 'true'
       # Fetches indicator of all types.
@@ -222,7 +222,7 @@ prototypes:
         # separate multiple tags with ',' and exclude tags by prepending '!'
         attribute_tags: 'tlp:red'
         # Fetches all events not older than 20 days.
-        datefrom: 20d
+        datefrom: 100d
         # Fetches only published events
         published: 'true'
       # Fetches indicator of all types.
