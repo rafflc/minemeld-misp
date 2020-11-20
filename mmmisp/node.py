@@ -71,6 +71,7 @@ class Miner(BasePollerFT):
 
         :return: None
         """
+        self.interval = self.config.get('interval', 600)
         super(Miner, self).configure()
 
         self.prefix = self.config.get('prefix', 'misp')
