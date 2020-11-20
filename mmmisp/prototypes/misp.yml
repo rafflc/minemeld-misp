@@ -32,7 +32,7 @@ prototypes:
         # tags on attribute
         # separate multiple tags with ',' and exclude tags by prepending '!'
         attribute_tags: 'tlp:white'
-        # Fetches all events not older than 20 days.
+        # Fetches all events not older than 100 days.
         datefrom: 100d
         # Fetches only published events
         published: 'true'
@@ -49,7 +49,7 @@ prototypes:
         sudden_death: true
         default: null
       attributes:
-        confidence: 80
+        confidence: 100
         share_level: white
 
   tlpWhiteAttributes:
@@ -74,7 +74,7 @@ prototypes:
         # tags on attribute
         # separate multiple tags with ',' and exclude tags by prepending '!'
         attribute_tags: 'tlp:white'
-        # Fetches all events not older than 20 days.
+        # Fetches all events not older than 100 days.
         datefrom: 100d
         # Fetches only published events
         published: 'true'
@@ -88,7 +88,7 @@ prototypes:
         sudden_death: true
         default: null
       attributes:
-        confidence: 70
+        confidence: 100
         share_level: white
 
   tlpGreenURLIP:
@@ -115,7 +115,7 @@ prototypes:
         # tags on attribute
         # separate multiple tags with ',' and exclude tags by prepending '!'
         attribute_tags: 'tlp:green'
-        # Fetches all events not older than 20 days.
+        # Fetches all events not older than 100 days.
         datefrom: 100d
         # Fetches only published events
         published: 'true'
@@ -132,7 +132,7 @@ prototypes:
         sudden_death: true
         default: null
       attributes:
-        confidence: 80
+        confidence: 100
         share_level: green
 
   tlpGreenAttributes:
@@ -157,7 +157,7 @@ prototypes:
         # tags on attribute
         # separate multiple tags with ',' and exclude tags by prepending '!'
         attribute_tags: 'tlp:green'
-        # Fetches all events not older than 20 days.
+        # Fetches all events not older than 100 days.
         datefrom: 100d
         # Fetches only published events
         published: 'true'
@@ -171,7 +171,7 @@ prototypes:
         sudden_death: true
         default: null
       attributes:
-        confidence: 80
+        confidence: 100
         share_level: green
 
   tlpAmberURLIP:
@@ -198,7 +198,7 @@ prototypes:
         # tags on attribute
         # separate multiple tags with ',' and exclude tags by prepending '!'
         attribute_tags: 'tlp:amber'
-        # Fetches all events not older than 20 days.
+        # Fetches all events not older than 100 days.
         datefrom: 100d
         # Fetches only published events
         published: 'true'
@@ -215,7 +215,7 @@ prototypes:
         sudden_death: true
         default: null
       attributes:
-        confidence: 80
+        confidence: 100
         share_level: amber
 
   tlpAmberAttributes:
@@ -240,7 +240,7 @@ prototypes:
         # tags on attribute
         # separate multiple tags with ',' and exclude tags by prepending '!'
         attribute_tags: 'tlp:amber'
-        # Fetches all events not older than 20 days.
+        # Fetches all events not older than 100 days.
         datefrom: 100d
         # Fetches only published events
         published: 'true'
@@ -254,7 +254,7 @@ prototypes:
         sudden_death: true
         default: null
       attributes:
-        confidence: 80
+        confidence: 100
         share_level: amber
 
   tlpRedAttributes:
@@ -279,7 +279,7 @@ prototypes:
         # tags on attribute
         # separate multiple tags with ',' and exclude tags by prepending '!'
         attribute_tags: 'tlp:red'
-        # Fetches all events not older than 20 days.
+        # Fetches all events not older than 100 days.
         datefrom: 100d
         # Fetches only published events
         published: 'true'
@@ -293,7 +293,7 @@ prototypes:
         sudden_death: true
         default: null
       attributes:
-        confidence: 80
+        confidence: 100
         share_level: red
 
   allAttributes:
@@ -314,7 +314,7 @@ prototypes:
       # source name used in the indicators
       source_name: InfoGuard.misp.any
       filters:
-        # Fetches all events not older than 20 days.
+        # Fetches all events not older than 100 days.
         datefrom: 100d
         # Fetches only published events
         published: 'true'
@@ -328,7 +328,7 @@ prototypes:
         sudden_death: true
         default: null
       attributes:
-        confidence: 80
+        confidence: 100
         share_level: red
 
   HOTtlpRedAttributes:
@@ -353,7 +353,7 @@ prototypes:
         # tags on attribute
         # separate multiple tags with ',' and exclude tags by prepending '!'
         attribute_tags: 'tlp:red'
-        # Fetches all events not older than 20 days.
+        # Fetches all events not older than 100 days.
         datefrom: 100d
         # Fetches only published events
         published: 'true'
@@ -367,6 +367,340 @@ prototypes:
         sudden_death: true
         default: null
       attributes:
-        confidence: 80
+        confidence: 100
         share_level: red
 
+  blocktlpWhiteURLIP:
+    author: InfoGuard AG
+    class: mmmisp.Miner
+    development_status: STABLE
+    node_type: miner
+    indicator_types:
+      - URL
+      - IPv4
+      - IPv6
+    tags:
+      - extension
+      - misp
+      - white
+      - block
+    description: >
+      Miner for MISP. This will extract all attributes of type URL and IP  with tlp:white and block tag.
+    config:
+      source_name: InfoGuard.misp.white
+      filters:
+        # tags on event
+        # separate multiple tags with ',' and exclude tags by prepending '!'
+        event_tags:
+        # tags on attribute
+        # separate multiple tags with ',' and exclude tags by prepending '!'
+        attribute_tags: 'tlp:white, block'
+        # Fetches all events not older than 100 days.
+        datefrom: 100d
+        # Fetches only published events
+        published: 'true'
+      # Fetches indicator of all types.
+      indicator_types:
+        - URL
+        - IPv4
+        - IPv6
+      # Verify remote certificate.
+      verify_cert: true
+      # age out of indicators
+      # disabled, removed when they disappear from the channel
+      age_out:
+        sudden_death: true
+        default: null
+      attributes:
+        confidence: 100
+        share_level: white
+
+  blocktlpGreenURLIP:
+    author: InfoGuard AG
+    class: mmmisp.Miner
+    development_status: STABLE
+    node_type: miner
+    indicator_types:
+      - URL
+      - IPv4
+      - IPv6
+    tags:
+      - extension
+      - misp
+      - green
+      - block
+    description: >
+      Miner for MISP. This will extract all attributes of type URL and IP with tlp:green and block tag.
+    config:
+      source_name: InfoGuard.misp.green
+      filters:
+        # tags on event
+        # separate multiple tags with ',' and exclude tags by prepending '!'
+        event_tags:
+        # tags on attribute
+        # separate multiple tags with ',' and exclude tags by prepending '!'
+        attribute_tags: 'tlp:green, block'
+        # Fetches all events not older than 100 days.
+        datefrom: 100d
+        # Fetches only published events
+        published: 'true'
+      # Fetches indicator of all types.
+      indicator_types:
+        - URL
+        - IPv4
+        - IPv6
+      # Verify remote certificate.
+      verify_cert: true
+      # age out of indicators
+      # disabled, removed when they disappear from the channel
+      age_out:
+        sudden_death: true
+        default: null
+      attributes:
+        confidence: 100
+        share_level: green
+
+  blocktlpAmberURLIP:
+    author: InfoGuard AG
+    class: mmmisp.Miner
+    development_status: STABLE
+    node_type: miner
+    indicator_types:
+      - URL
+      - IPv4
+      - IPv6
+    tags:
+      - extension
+      - misp
+      - amber
+      - block
+    description: >
+      Miner for MISP. This will extract all attributes of type URL and IP with tlp:amber and block tag.
+    config:
+      source_name: InfoGuard.misp.amber
+      filters:
+        # tags on event
+        # separate multiple tags with ',' and exclude tags by prepending '!'
+        event_tags:
+        # tags on attribute
+        # separate multiple tags with ',' and exclude tags by prepending '!'
+        attribute_tags: 'tlp:amber, block'
+        # Fetches all events not older than 100 days.
+        datefrom: 100d
+        # Fetches only published events
+        published: 'true'
+      # Fetches indicator of type url, ipv4 and ipv6.
+      indicator_types:
+        - URL
+        - IPv4
+        - IPv6
+      # Verify remote certificate.
+      verify_cert: true
+      # age out of indicators
+      # disabled, removed when they disappear from the channel
+      age_out:
+        sudden_death: true
+        default: null
+      attributes:
+        confidence: 100
+        share_level: amber
+
+  detecttlpWhiteAttributes:
+    author: InfoGuard AG
+    class: mmmisp.Miner
+    development_status: STABLE
+    node_type: miner
+    indicator_types:
+      - any
+    tags:
+      - extension
+      - misp
+      - white
+      - detect
+    description: >
+      Miner for MISP. This will extract all attributes with tlp:white and detect tag.
+    config:
+      source_name: InfoGuard.misp.white
+      filters:
+        # tags on event
+        # separate multiple tags with ',' and exclude tags by prepending '!'
+        event_tags:
+        # tags on attribute
+        # separate multiple tags with ',' and exclude tags by prepending '!'
+        attribute_tags: 'tlp:white, detect'
+        # Fetches all events not older than 100 days.
+        datefrom: 100d
+        # Fetches only published events
+        published: 'true'
+      # Fetches indicator of all types.
+      indicator_types: null
+      # Verify remote certificate.
+      verify_cert: true
+      # age out of indicators
+      # disabled, removed when they disappear from the channel
+      age_out:
+        sudden_death: true
+        default: null
+      attributes:
+        confidence: 100
+        share_level: white
+
+  detecttlpGreenAttributes:
+    author: InfoGuard AG
+    class: mmmisp.Miner
+    development_status: STABLE
+    node_type: miner
+    indicator_types:
+      - any
+    tags:
+      - extension
+      - misp
+      - green
+      - detect
+    description: >
+      Miner for MISP. This will extract all attributes with tlp:green and detect tag.
+    config:
+      source_name: InfoGuard.misp.green
+      filters:
+        # tags on event
+        # separate multiple tags with ',' and exclude tags by prepending '!'
+        event_tags:
+        # tags on attribute
+        # separate multiple tags with ',' and exclude tags by prepending '!'
+        attribute_tags: 'tlp:green, detect'
+        # Fetches all events not older than 100 days.
+        datefrom: 100d
+        # Fetches only published events
+        published: 'true'
+      # Fetches indicator of all types.
+      indicator_types: null
+      # Verify remote certificate.
+      verify_cert: true
+      # age out of indicators
+      # disabled, removed when they disappear from the channel
+      age_out:
+        sudden_death: true
+        default: null
+      attributes:
+        confidence: 100
+        share_level: green
+
+  detecttlpAmberAttributes:
+    author: InfoGuard AG
+    class: mmmisp.Miner
+    development_status: STABLE
+    node_type: miner
+    indicator_types:
+      - any
+    tags:
+      - extension
+      - misp
+      - amber
+      - detect
+    description: >
+      Miner for MISP. This will extract all attributes with tlp:amber and detect tag.
+    config:
+      source_name: InfoGuard.misp.amber
+      filters:
+        # tags on event
+        # separate multiple tags with ',' and exclude tags by prepending '!'
+        event_tags:
+        # tags on attribute
+        # separate multiple tags with ',' and exclude tags by prepending '!'
+        attribute_tags: 'tlp:amber, detect'
+        # Fetches all events not older than 100 days.
+        datefrom: 100d
+        # Fetches only published events
+        published: 'true'
+      # Fetches indicator of all types.
+      indicator_types: null
+      # Verify remote certificate.
+      verify_cert: true
+      # age out of indicators
+      # disabled, removed when they disappear from the channel
+      age_out:
+        sudden_death: true
+        default: null
+      attributes:
+        confidence: 100
+        share_level: amber
+
+  feedtlpWhiteAttributes:
+    author: InfoGuard AG
+    class: mmmisp.Miner
+    development_status: STABLE
+    node_type: miner
+    indicator_types:
+      - any
+    tags:
+      - extension
+      - misp
+      - white
+      - feed
+    description: >
+      Miner for MISP. This will extract all attributes with tlp:white and feed tag.
+    config:
+      source_name: InfoGuard.misp.white
+      filters:
+        # tags on event
+        # separate multiple tags with ',' and exclude tags by prepending '!'
+        event_tags:
+        # tags on attribute
+        # separate multiple tags with ',' and exclude tags by prepending '!'
+        attribute_tags: 'tlp:white, feed'
+        # Fetches all events not older than 100 days.
+        datefrom: 100d
+        # Fetches only published events
+        published: 'true'
+      # Fetches indicator of all types.
+      indicator_types: null
+      # Verify remote certificate.
+      verify_cert: true
+      # age out of indicators
+      # disabled, removed when they disappear from the channel
+      age_out:
+        sudden_death: true
+        default: null
+      attributes:
+        confidence: 100
+        share_level: white
+
+  feedtlpGreenAttributes:
+    author: InfoGuard AG
+    class: mmmisp.Miner
+    development_status: STABLE
+    node_type: miner
+    indicator_types:
+      - any
+    tags:
+      - extension
+      - misp
+      - green
+      - feed
+    description: >
+      Miner for MISP. This will extract all attributes with tlp:green and feed tag.
+    config:
+      source_name: InfoGuard.misp.green
+      filters:
+        # tags on event
+        # separate multiple tags with ',' and exclude tags by prepending '!'
+        event_tags:
+        # tags on attribute
+        # separate multiple tags with ',' and exclude tags by prepending '!'
+        attribute_tags: 'tlp:green, feed'
+        # Fetches all events not older than 100 days.
+        datefrom: 100d
+        # Fetches only published events
+        published: 'true'
+      # Fetches indicator of all types.
+      indicator_types: null
+      # Verify remote certificate.
+      verify_cert: true
+      # age out of indicators
+      # disabled, removed when they disappear from the channel
+      age_out:
+        sudden_death: true
+        default: null
+      attributes:
+        confidence: 100
+        share_level: green

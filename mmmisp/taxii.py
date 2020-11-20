@@ -329,8 +329,9 @@ class DataFeed(actorbase.ActorBaseFT):
                     value['type'],
                     eindicator
                 ),
-                description='{} indicator from InfoGuard Threat Intel Feed'.format(
-                    value['type']
+                description='{} indicator from InfoGuard Threat Intel Feed. Identified as "{}"'.format(
+                    value['type'],
+                    value.get('misp_attribute_comment', ''),
                 ),
                 timestamp=datetime.utcnow().replace(tzinfo=pytz.utc)
             )
