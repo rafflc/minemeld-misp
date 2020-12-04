@@ -625,6 +625,126 @@ prototypes:
         confidence: 100
         share_level: amber
 
+  blocktlpWhiteAttributes:
+    author: InfoGuard AG
+    class: mmmisp.Miner
+    development_status: STABLE
+    node_type: miner
+    indicator_types:
+      - any
+    tags:
+      - extension
+      - misp
+      - white
+      - block
+    description: >
+      Miner for MISP. This will extract all attributes with tlp:white and block tag.
+    config:
+      source_name: InfoGuard.misp.white
+      filters:
+        # tags on event
+        # separate multiple tags with ',' and exclude tags by prepending '!'
+        event_tags:
+        # tags on attribute
+        # separate multiple tags with ',' and exclude tags by prepending '!'
+        attribute_tags: 'tlp:white, block'
+        # Fetches all events not older than 100 days.
+        datefrom: 100d
+        # Fetches only published events
+        published: 'true'
+      # Fetches indicator of all types.
+      indicator_types: null
+      # Verify remote certificate.
+      verify_cert: true
+      # age out of indicators
+      # disabled, removed when they disappear from the channel
+      age_out:
+        sudden_death: true
+        default: null
+      attributes:
+        confidence: 100
+        share_level: white
+
+  blocktlpGreenAttributes:
+    author: InfoGuard AG
+    class: mmmisp.Miner
+    development_status: STABLE
+    node_type: miner
+    indicator_types:
+      - any
+    tags:
+      - extension
+      - misp
+      - green
+      - block
+    description: >
+      Miner for MISP. This will extract all attributes with tlp:green and block tag.
+    config:
+      source_name: InfoGuard.misp.green
+      filters:
+        # tags on event
+        # separate multiple tags with ',' and exclude tags by prepending '!'
+        event_tags:
+        # tags on attribute
+        # separate multiple tags with ',' and exclude tags by prepending '!'
+        attribute_tags: 'tlp:green, block'
+        # Fetches all events not older than 100 days.
+        datefrom: 100d
+        # Fetches only published events
+        published: 'true'
+      # Fetches indicator of all types.
+      indicator_types: null
+      # Verify remote certificate.
+      verify_cert: true
+      # age out of indicators
+      # disabled, removed when they disappear from the channel
+      age_out:
+        sudden_death: true
+        default: null
+      attributes:
+        confidence: 100
+        share_level: green
+
+  blocktlpAmberAttributes:
+    author: InfoGuard AG
+    class: mmmisp.Miner
+    development_status: STABLE
+    node_type: miner
+    indicator_types:
+      - any
+    tags:
+      - extension
+      - misp
+      - amber
+      - block
+    description: >
+      Miner for MISP. This will extract all attributes with tlp:amber and block tag.
+    config:
+      source_name: InfoGuard.misp.amber
+      filters:
+        # tags on event
+        # separate multiple tags with ',' and exclude tags by prepending '!'
+        event_tags:
+        # tags on attribute
+        # separate multiple tags with ',' and exclude tags by prepending '!'
+        attribute_tags: 'tlp:amber, block'
+        # Fetches all events not older than 100 days.
+        datefrom: 100d
+        # Fetches only published events
+        published: 'true'
+      # Fetches indicator of all types.
+      indicator_types: null
+      # Verify remote certificate.
+      verify_cert: true
+      # age out of indicators
+      # disabled, removed when they disappear from the channel
+      age_out:
+        sudden_death: true
+        default: null
+      attributes:
+        confidence: 100
+        share_level: amber
+
   feedtlpWhiteAttributes:
     author: InfoGuard AG
     class: mmmisp.Miner
